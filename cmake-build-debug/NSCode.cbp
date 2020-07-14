@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="NSCode"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="NSCode">
+				<Option output="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/NSCode" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.3/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 NSCode"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="NSCode/fast">
+				<Option output="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/NSCode" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.3/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 NSCode/fast"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/Users/nims-junhong/Library/Mobile\ Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/AGM.cpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/AGM.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/AXLGEN.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/AxialData.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/Basic++.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/CalcAtNeumannPt.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/CalcDiff.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/CalcRepresenSol.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/Class++.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/ControlData.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/Coordinate.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/Greenfunctions.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/Header.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/MatrixProcess.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/NavierStokesSolver.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/Point.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/Read.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/Solver.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/Stuff++.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/ftns.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/mkl_dss.h">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/mkl_pardiso.h">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/mkl_spblas.h">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/mkl_types.h">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/Header/util.hpp">
+			<Option target="NSCode"/>
+		</Unit>
+		<Unit filename="/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

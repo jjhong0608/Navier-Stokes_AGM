@@ -1,0 +1,14 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" "/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode"
+CMake Error: The following variables are used in this project, but they are set to NOTFOUND.
+Please set them or make sure they are set and tested correctly in the CMake files:
+CORE_MODULE
+    linked by target "AGM" in directory /Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode
+ILP64_MODULE
+    linked by target "AGM" in directory /Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode
+IOMP_MODULE
+    linked by target "AGM" in directory /Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode
+THREAD_MODULE
+    linked by target "AGM" in directory /Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode
+
+-- Configuring incomplete, errors occurred!
+See also "/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/CMakeFiles/CMakeOutput.log".

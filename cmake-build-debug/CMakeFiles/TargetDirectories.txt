@@ -1,0 +1,3 @@
+/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/nims-junhong/Library/Mobile Documents/com~apple~CloudDocs/Code/NSCode/cmake-build-debug/CMakeFiles/NSCode.dir
