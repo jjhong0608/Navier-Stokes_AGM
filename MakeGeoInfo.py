@@ -3,7 +3,7 @@
 def main():
     from MakeGeoInfo_submodule import WriteOctagonSection, WriteRegion, WriteCircleSection, WriteLactangleSection
 
-    h = 0.1
+    h = 0.025
 
     # translation_const = h * 0.5
     translation_const = 0.0E0
@@ -15,7 +15,7 @@ def main():
         WriteCircleSection(fileID, "section1 0.0 0.0", r=1.0E0, BC='D', BV=1e3, nLine=2001)
 
         # WriteRegion (fileID, "Region0", 1.0E0, 0.0E0, 0.0E0, 1.0E0, 1.0E0, h, h, "+", "section0")
-        WriteRegion(fileID, "Region0", 5.0E-1, -2.0E0 - translation_const, -2.0E0 - translation_const,
+        WriteRegion(fileID, "Region0", 1.0E0, -2.0E0 - translation_const, -2.0E0 - translation_const,
                     2.0E0 + translation_const, 2.0E0 + translation_const, h, h, '+', "section0", '-', "section1")
         # WriteRegion (fileID, "Region0", 1.0E0, -3.0E0 - translation_const, -3.0E0 - translation_const / 3.14, 3.0E0 + translation_const, 3.0E0 + translation_const, h, h, '+', "section0", '-', "section1")
     # h = [0.1, 0.05, 0.025, 0.0125]

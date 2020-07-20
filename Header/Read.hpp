@@ -2,6 +2,8 @@
 #define READ
 
 #include "Class++.hpp"
+#include "Header.hpp"
+
 
 int IsIn (char cc, const char *tokens) {
   // return 1  <------ cc happens to {tokens}
