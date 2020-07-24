@@ -60,13 +60,9 @@ double u_ftn(Point *pt) {
         return -exp((1.0 / 2.0) * (-pow(x, 2) - pow(y, 2)) / pow(t, 2)) / pow(t, 2) +
                pow(y, 2) * exp((1.0 / 2.0) * (-pow(x, 2) - pow(y, 2)) / pow(t, 2)) / pow(t, 4);
     if (pt->Mark() == "phi")
-        return 0.25 * (-pow(x, 2) + pow(y, 2)) *
-               (pow(t, 4) * exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(dt - t, 2)) +
-                pow(dt - t, 4) * exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(t, 2))) / (pow(t, 4) * pow(dt - t, 4));
+        return 0.5*(-pow(x, 2) + pow(y, 2))*exp((1.0/2.0)*(-pow(x, 2) - pow(y, 2))/pow(t, 2))/pow(t, 4);
     if (pt->Mark() == "psi")
-        return 0.25 * (-pow(x, 2) + pow(y, 2)) *
-               (pow(t, 4) * exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(dt - t, 2)) +
-                pow(dt - t, 4) * exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(t, 2))) / (pow(t, 4) * pow(dt - t, 4));
+        return 0.5*(-pow(x, 2) + pow(y, 2))*exp((1.0/2.0)*(-pow(x, 2) - pow(y, 2))/pow(t, 2))/pow(t, 4);
     if (pt->Mark() == "diff_u")
         return sqrt(u_ftn(pt->Velocity('u')->Diff('x')) * u_ftn(pt->Velocity('u')->Diff('x')) +
                     u_ftn(pt->Velocity('u')->Diff('y')) * u_ftn(pt->Velocity('u')->Diff('y')));
@@ -79,6 +75,38 @@ double u_ftn(Point *pt) {
     if (pt->Mark() == "diff_diff_v")
         return sqrt(u_ftn(pt->Velocity('v')->Diff('x')->Diff('x')) * u_ftn(pt->Velocity('v')->Diff('x')->Diff('x')) +
                     u_ftn(pt->Velocity('v')->Diff('y')->Diff('y')) * u_ftn(pt->Velocity('v')->Diff('y')->Diff('y')));
+    if (pt->Mark() == "prev") {
+        t = pt->Pressure()->Time() - pt->Pressure()->Dt();
+        return exp((1.0 / 2.0) * (-pow(x, 2) - pow(y, 2)) / pow(t, 2));
+    }
+    if (pt->Mark() == "preu") {
+        t = pt->Pressure()->Time() - pt->Pressure()->Dt();
+        return exp((1.0 / 2.0) * (-pow(x, 2) - pow(y, 2)) / pow(t, 2));
+    }
+    if (pt->Mark() == "prephi") {
+        t = pt->Pressure()->Time() - pt->Pressure()->Dt();
+        return 0.5 * (-pow(x, 2) + pow(y, 2)) * exp((1.0 / 2.0) * (-pow(x, 2) - pow(y, 2)) / pow(t, 2)) / pow(t, 4);
+    }
+    if (pt->Mark() == "prepsi") {
+        t = pt->Pressure()->Time() - pt->Pressure()->Dt();
+        return 0.5 * (-pow(x, 2) + pow(y, 2)) * exp((1.0 / 2.0) * (-pow(x, 2) - pow(y, 2)) / pow(t, 2)) / pow(t, 4);
+    }
+    if (pt->Mark() == "preuxx") {
+        t = pt->Pressure()->Time() - pt->Pressure()->Dt();
+        return (-pow(t, 2) + pow(x, 2)) * exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(t, 2)) / pow(t, 4);
+    }
+    if (pt->Mark() == "preuyy") {
+        t = pt->Pressure()->Time() - pt->Pressure()->Dt();
+        return (-pow(t, 2) + pow(y, 2)) * exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(t, 2)) / pow(t, 4);
+    }
+    if (pt->Mark() == "prevxx") {
+        t = pt->Pressure()->Time() - pt->Pressure()->Dt();
+        return (-pow(t, 2) + pow(x, 2)) * exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(t, 2)) / pow(t, 4);
+    }
+    if (pt->Mark() == "prevyy") {
+        t = pt->Pressure()->Time() - pt->Pressure()->Dt();
+        return (-pow(t, 2) + pow(y, 2)) * exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(t, 2)) / pow(t, 4);
+    }
 
     sprintf(errorMassage, "u_ftn (Point *pt), pt->Mark () == %s, please check Mark.", pt->Mark().c_str());
     PrintError(errorMassage);
@@ -113,6 +141,21 @@ double u_ftn_Dirichlet(Point *pt) {
     if (pt->Mark() == "diff_v") return u_ftn(pt);
     if (pt->Mark() == "diff_diff_u") return u_ftn(pt);
     if (pt->Mark() == "diff_diff_v") return u_ftn(pt);
+    if (pt->Mark() == "prev") {
+        t = pt->Pressure()->Time() - pt->Pressure()->Dt();
+        return exp((1.0 / 2.0) * (-pow(x, 2) - pow(y, 2)) / pow(t, 2));
+    }
+    if (pt->Mark() == "preu") {
+        t = pt->Pressure()->Time() - pt->Pressure()->Dt();
+        return exp((1.0 / 2.0) * (-pow(x, 2) - pow(y, 2)) / pow(t, 2));
+    }
+    if (pt->Mark() == "prephi") return u_ftn(pt);
+    if (pt->Mark() == "prepsi") return u_ftn(pt);
+    if (pt->Mark() == "preuxx") return u_ftn(pt);
+    if (pt->Mark() == "preuyy") return u_ftn(pt);
+    if (pt->Mark() == "prevxx") return u_ftn(pt);
+    if (pt->Mark() == "prevyy") return u_ftn(pt);
+
 
     sprintf(errorMassage, "u_ftn_Dirichlet (Point *pt), pt->Mark () == %s, please check Mark.", pt->Mark().c_str());
     PrintError(errorMassage);
@@ -153,11 +196,7 @@ double b_u_ftn(double x, double y) {
 }
 
 double f_ftn(double x, double y, double t) {
-    return 2.0 * exp((1.0 / 2.0) * (-pow(x, 2) - pow(y, 2)) / pow(t, 2)) / pow(t, 2) -
-           (-pow(x, 2) - pow(y, 2)) * exp((1.0 / 2.0) * (-pow(x, 2) - pow(y, 2)) / pow(t, 2)) / pow(t, 3) -
-           1.0 * pow(x, 2) * exp((1.0 / 2.0) * (-pow(x, 2) - pow(y, 2)) / pow(t, 2)) / pow(t, 4) -
-           1.0 * pow(y, 2) * exp((1.0 / 2.0) * (-pow(x, 2) - pow(y, 2)) / pow(t, 2)) / pow(t, 4);
-
+    return (2.0*pow(t, 2) + t*(pow(x, 2) + pow(y, 2)) - 1.0*pow(x, 2) - 1.0*pow(y, 2))*exp(-1.0/2.0*(pow(x, 2) + pow(y, 2))/pow(t, 2))/pow(t, 4);
 }
 
 // External force f
@@ -170,16 +209,7 @@ double f_ftn(Point *pt) {
     // double spi = sqrt (2.0E0 * M_PI);
     double dt = pt->Pressure()->Dt();
 
-    return (1.0 * pow(t, 4) * pow(dt - t, 2) * exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(dt - t, 2)) -
-            0.5 * pow(t, 4) * (dt - t) * (pow(x, 2) + pow(y, 2)) *
-            exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(dt - t, 2)) -
-            0.5 * pow(t, 4) * (pow(x, 2) + pow(y, 2)) * exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(dt - t, 2)) +
-            1.0 * pow(t, 2) * pow(dt - t, 4) * exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(t, 2)) +
-            0.5 * t * pow(dt - t, 4) * (pow(x, 2) + pow(y, 2)) * exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(t, 2)) -
-            0.5 * pow(dt - t, 4) * (pow(x, 2) + pow(y, 2)) * exp(-1.0 / 2.0 * (pow(x, 2) + pow(y, 2)) / pow(t, 2))) /
-           (pow(t, 4) * pow(dt - t, 4));
-
-    return 5.0E-1 * (f_ftn(x, y, t) + f_ftn(x, y, t - pt->Pressure()->Dt()));
+    return 5.0E-1 * (f_ftn(x, y, t) + f_ftn(x, y, t - dt));
 
     printf("Mark = %s\n", pt->Mark().c_str());
     exit(1);

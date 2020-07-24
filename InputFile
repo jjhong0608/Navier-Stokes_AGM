@@ -4,5 +4,5 @@ AGM_Output_Filename:		AGM_Result
 Initial_time:			1.0
 Terminal_time:			1.50001
 Time_step:			0
-dt:			0.025
+dt:			0.0125
 The_number_of_iterations:       1

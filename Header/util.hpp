@@ -699,7 +699,7 @@ void SettingPoints(AxialData *adat, Point *ptU, Point *ptV, Point *ptP,
                    Point *pt_hat_u, Point *pt_hat_v, Point *pt_pre_u, Point *pt_pre_v, Point *pt_old_u, Point *pt_old_v,
                    Point *pt_pre_diff_u_x, Point *pt_pre_diff_u_y, Point *pt_pre_diff_u_xx, Point *pt_pre_diff_u_yy,
                    Point *pt_pre_diff_v_x, Point *pt_pre_diff_v_y, Point *pt_pre_diff_v_xx, Point *pt_pre_diff_v_yy,
-                   Point *pt_phi, Point *pt_psi) {
+                   Point *pt_phi, Point *pt_psi, Point *pt_pre_phi, Point *pt_pre_psi) {
 
     for (size_t i = 0; i < adat->Pts_Num(); i++) {
         // u의 값을 저장하는 점의 표시
@@ -756,6 +756,10 @@ void SettingPoints(AxialData *adat, Point *ptU, Point *ptV, Point *ptP,
         pt_phi[i].SetMark("phi");
         // psi를 저장하는 점의 표시
         pt_psi[i].SetMark("psi");
+        // 이전의 phi를 저장하는 점의 표시
+        pt_pre_phi[i].SetMark("prephi");
+        // 이전의 psi를 저장하는 점의 표시
+        pt_pre_psi[i].SetMark("prepsi");
 
         // velocityd에 자신의 주소를 저장
         ptU[i].SetVelocity('u', &ptU[i]);
@@ -786,6 +790,8 @@ void SettingPoints(AxialData *adat, Point *ptU, Point *ptV, Point *ptP,
         pt_pre_diff_v_yy[i].SetVelocity('v', &ptV[i]);
         pt_phi[i].SetVelocity('u', &ptU[i]);
         pt_psi[i].SetVelocity('v', &ptV[i]);
+        pt_pre_phi[i].SetVelocity('u', &ptU[i]);
+        pt_pre_psi[i].SetVelocity('v', &ptV[i]);
 
         // opposite velcotiy를 저장
         ptU[i].SetVelocity('v', &ptV[i]);
@@ -813,6 +819,8 @@ void SettingPoints(AxialData *adat, Point *ptU, Point *ptV, Point *ptP,
         pt_pre_diff_v_yy[i].SetVelocity('u', &ptU[i]);
         pt_phi[i].SetVelocity('v', &ptU[i]);
         pt_psi[i].SetVelocity('u', &ptV[i]);
+        pt_pre_phi[i].SetVelocity('v', &ptU[i]);
+        pt_pre_psi[i].SetVelocity('u', &ptV[i]);
 
         // 압력을 저장
         ptU[i].SetPressure(&ptP[i]);
@@ -842,6 +850,8 @@ void SettingPoints(AxialData *adat, Point *ptU, Point *ptV, Point *ptP,
         pt_pre_diff_v_yy[i].SetPressure(&ptP[i]);
         pt_phi[i].SetPressure(&ptP[i]);
         pt_psi[i].SetPressure(&ptP[i]);
+        pt_pre_phi[i].SetPressure(&ptP[i]);
+        pt_pre_psi[i].SetPressure(&ptP[i]);
 
         // 미분을 저장
         ptU[i].SetDiff('x', &pt_diff_u_x[i]);
@@ -891,6 +901,12 @@ void SettingPoints(AxialData *adat, Point *ptU, Point *ptV, Point *ptP,
         // phi의 점을 저장
         ptU[i].SetPhi(&pt_phi[i]);
         ptV[i].SetPhi(&pt_psi[i]);
+        pt_pre_u[i].SetPhi(&pt_pre_phi[i]);
+        pt_pre_v[i].SetPhi(&pt_pre_psi[i]);
+
+        // 이전의 phi를 저장
+        pt_phi[i].SetPre(&pt_pre_phi[i]);
+        pt_psi[i].SetPre(&pt_pre_psi[i]);
     }
 
 }

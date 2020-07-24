@@ -1,6 +1,8 @@
 #ifndef POINT_H
 #define POINT_H
 
+#include <utility>
+
 #include "Coordinate.hpp"
 
 /* 생성자 */
@@ -573,7 +575,7 @@ Point &Point::SetPressure(Point *source) {
 /* mark를 저장 */
 Point &Point::SetMark(string src) {
     // mark를 저장
-    this->mark = src;
+    this->mark = std::move(src);
     return *this;
 }
 
@@ -1764,7 +1766,7 @@ double Point::PrintDebuggingData(const string& verbose, xData *xdat, yData *ydat
     return returnValue;
 }
 
-Point &Point::PrintDebuggingData(const string verbose, const char *massage) {
+Point &Point::PrintDebuggingData(const string& verbose, const char *massage) {
 
     int verboseCoord = int(verbose[0]);
     int verboseBound = int(verbose[1]);
@@ -1888,6 +1890,7 @@ double Point::CheckRepresentationFormula(Point *pt, xData *xdat, yData *ydat, bo
 
         printf("Boundaryvalue = %23.16e\n", this->Boundaryvalue());
 
+
         for (size_t i = 0; i < 14; i++)
             if (pt_x[i]) {
                 result[0] += ent_x[i] * u_ftn_Dirichlet(pt_x[i]);
@@ -1976,12 +1979,15 @@ double Point::CheckRepresentationFormula(Point *pt, xData *xdat, yData *ydat, bo
     } else if (pt->Mark().length() == 3) {
         char xy = pt->Mark()[2];
 
-        result[0] -= 1 / this->MaterialProperty() *
-                     (5.0E-1 * this->F() + u_ftn_Dirichlet(this->Phi()) - 5.0E-1 * u_ftn_Dirichlet(this) / this->Dt() +
-                      5.0E-1 * this->Pre()->Value() / this->Dt());
-        result[1] -= 1 / this->MaterialProperty() *
-                     (5.0E-1 * this->F() - u_ftn_Dirichlet(this->Phi()) - 5.0E-1 * u_ftn_Dirichlet(this) / this->Dt() +
-                      5.0E-1 * this->Pre()->Value() / this->Dt());
+        result[0] -= 5.0E-1 * (this->F() + u_ftn(this->Phi())) / this->MaterialProperty();
+        result[0] += 5.0E-1 * (u_ftn_Dirichlet(this) - u_ftn_Dirichlet(this->Pre())) / this->Dt() / this->MaterialProperty();
+        result[0] -= u_ftn(this->Diff('x')->Diff('x')->Pre());
+        result[0] -= 5.0E-1 * u_ftn(this->Phi()->Pre()) / this->MaterialProperty();
+
+        result[1] -= 5.0E-1 * (this->F() - u_ftn(this->Phi())) / this->MaterialProperty();
+        result[1] += 5.0E-1 * (u_ftn_Dirichlet(this) - u_ftn_Dirichlet(this->Pre())) / this->Dt() / this->MaterialProperty();
+        result[1] -= u_ftn(this->Diff('y')->Diff('y')->Pre());
+        result[1] += 5.0E-1 * u_ftn(this->Phi()->Pre()) / this->MaterialProperty();
 
         printf("result[0] = %23.16e\n", result[0]);
         printf("result[1] = %23.16e\n", result[1]);
@@ -2025,13 +2031,13 @@ double Point::CheckRepresentationFormula(Point *pt, xData *xdat, yData *ydat, bo
 
         printf("xdat->F = %23.16e\n", xdat->F);
         printf("ydat->F = %23.16e\n", ydat->F);
-        printf("Representation formula for x = %23.16e\n", result[0] - 5.0E-1 * xdat->F - u_ftn_Dirichlet(pt)),
-        printf("Representation formula for y = %23.16e\n", result[1] - 5.0E-1 * ydat->F - u_ftn_Dirichlet(pt));
+        printf("Representation formula for x = %23.16e\n", result[0] - xdat->F - u_ftn_Dirichlet(pt)),
+                printf("Representation formula for y = %23.16e\n", result[1] - ydat->F - u_ftn_Dirichlet(pt));
 
         printf("Approximation formula for x = %23.16e\n", sol_x_diff_diff_approx(HeadVelocity(pt)));
 
-        if (xy == 'x') return fabs(result[0] - u_ftn_Dirichlet(pt) - 5.0E-1 * xdat->F);
-        else if (xy == 'y') return fabs(result[1] - u_ftn_Dirichlet(pt) - 5.0E-1 * ydat->F);
+        if (xy == 'x') return fabs(result[0] - u_ftn_Dirichlet(pt) - xdat->F);
+        else if (xy == 'y') return fabs(result[1] - u_ftn_Dirichlet(pt) - ydat->F);
     }
 
     exit(0);

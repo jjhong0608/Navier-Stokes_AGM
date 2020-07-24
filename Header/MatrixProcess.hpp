@@ -27,9 +27,7 @@ MatrixProcess::MatrixProcess(AxialData *adat) {
 }
 
 /* 소멸자 */
-MatrixProcess::~MatrixProcess() {
-
-}
+MatrixProcess::~MatrixProcess() = default;
 
 /* class의 변수의 초기화 */
 MatrixProcess &MatrixProcess::initialization(AxialData *adat, int k) {
@@ -59,7 +57,7 @@ MatrixProcess &MatrixProcess::countEnt_num(int node, AxialData *adat, Point *pt,
         // 오른쪽, 왼쪽, 위쪽, 아래쪽의 점에서의 값을 저장하기 위한 array
         this->uniqEnt[i] = 0.0;
         // arrInt에서 중복되는 점들을 제거한 index를 저장하기 위한 array
-        this->arrInt[i] = NULL;
+        this->arrInt[i] = nullptr;
         // arrInt에서 중복되는 점들을 제거한 점에서의 값을 저장하기 위한 array
         this->arrEnt[i] = 0.0;
     }
@@ -78,7 +76,7 @@ MatrixProcess &MatrixProcess::countEnt_num(int node, AxialData *adat, Point *pt,
     // 행렬이 2n x 2n 이기 때문에, 14 - 26번째 원소는 1 - 13번째 원소의 반복
     for (size_t i = 13; i < 26; i++) {
         // arrInt의 원소가 존재하는 경우
-        if (this->arrInt[i - 13] != NULL) {
+        if (this->arrInt[i - 13] != nullptr) {
             // arrInt가 저장한 주소를 그대로 저장
             this->arrInt[i] = this->arrInt[i - 13];
         }
@@ -142,15 +140,15 @@ MatrixProcess &MatrixProcess::countEnt_num(int node, AxialData *adat, Point *pt,
         // arrEnt의 원소가 0인 경우
         if (IsEqualDouble(this->arrEnt[i], ZeroValue)) {
             // arrInt의 원소의 값을 초기화
-            this->arrInt[i] = NULL;
+            this->arrInt[i] = nullptr;
         }
     }
     // arrInt의 주소에 해당하는 index의 중복된 값을 제거하기 위한 변수선언 (j: 중복되는 점의 arrInt에서의 위치, k: 중복되지 않는 원소의 개수)
-    int j = -1, k = 0;
+    int j, k = 0;
     // arrInt의 주소에 해당하는 index의 중복된 값을 제거
     for (size_t i = 0; i < 26; i++) {
         // arrInt의 원소가 존재하는 경우
-        if (this->arrInt[i] != NULL) {
+        if (this->arrInt[i] != nullptr) {
             // x-축선에서의 식과 y-축선에서의 식의 합인 경우
             if (i < 13) {
                 // arrInt의 원소가 중복되는지의 여부와 중복된다면, 중복되는 점의 arrInt의 원소의 내부점의 index를 저장 (중복x: -1)
@@ -194,7 +192,7 @@ MatrixProcess &MatrixProcess::MakeMatrixSystem(int node, AxialData *adat, Point 
     // 각 array의 초기화
     for (size_t i = 0; i < 26; i++) {
         // 오른쪽, 왼쪽, 위쪽, 아래쪽의 점들의 주소를 저장하기 위한 array
-        this->arrInt[i] = NULL;
+        this->arrInt[i] = nullptr;
         // 오른쪽, 왼쪽, 위쪽, 아래쪽의 점에서의 값을 저장하기 위한 array
         this->arrEnt[i] = ZeroValue;
         // arrInt에서 중복되는 점들을 제거한 index를 저장하기 위한 array
@@ -223,7 +221,7 @@ MatrixProcess &MatrixProcess::MakeMatrixSystem(int node, AxialData *adat, Point 
     // 행렬이 2n x 2n 이기 때문에, 14 - 26번째 원소는 1 - 13번째 원소의 반복
     for (size_t i = 13; i < 26; i++) {
         // arrInt의 원소가 존재하는 경우
-        if (this->arrInt[i - 13] != NULL) {
+        if (this->arrInt[i - 13] != nullptr) {
             // arrInt가 저장한 주소를 그대로 저장
             this->arrInt[i] = this->arrInt[i - 13];
         }
@@ -286,7 +284,7 @@ MatrixProcess &MatrixProcess::MakeMatrixSystem(int node, AxialData *adat, Point 
         // arrEnt의 원소가 0인 경우
         if (IsEqualDouble(this->arrEnt[i], ZeroValue)) {
             // arrInt의 원소의 값을 초기화
-            this->arrInt[i] = NULL;
+            this->arrInt[i] = nullptr;
         }
     }
     // for (size_t i = 0; i < 26; i++) {
@@ -340,11 +338,11 @@ MatrixProcess &MatrixProcess::MakeMatrixSystem(int node, AxialData *adat, Point 
     //   fclose (matrix_confirm);
     // }
     // arrInt의 주소에 해당하는 index의 중복된 값을 제거하기 위한 변수선언 (j: 중복되는 점의 arrInt에서의 위치, k: 중복되지 않는 원소의 개수)
-    int j = -1, k = 0;
+    int j, k = 0;
     // arrInt의 주소에 해당하는 index의 중복된 값을 제거하고 값을 더함
     for (size_t i = 0; i < 26; i++) {
         // arrInt의 원소가 존재하는 경우
-        if (this->arrInt[i] != NULL) {
+        if (this->arrInt[i] != nullptr) {
             // x-축선에서의 식과 y-축선에서의 식의 합인 경우
             if (i < 13) {
                 // arrInt의 원소가 중복되는지의 여부와 중복된다면, 중복되는 점의 arrInt의 원소의 내부점의 index를 저장 (중복x: -1)
@@ -395,11 +393,11 @@ MatrixProcess &MatrixProcess::MakeMatrixSystem(int node, AxialData *adat, Point 
         // uniqInt의 원소가 -1인 경우 다음으로 넘어감
         if (this->uniqInt[i] == -1) continue;
         // uniqInt의 원소의 크기를 비교
-        for (size_t j = 0; j < 26; j++) {
+        for (size_t ii = 0; ii < 26; ii++) {
             // uniqInt의 원소가 -1인 경우, 종료
-            if (this->uniqInt[j] == -1) break;
+            if (this->uniqInt[ii] == -1) break;
             // uniqInt의 i번째 원소가 j번째 원소보다 크거나 같은 경우, sortInt에 1을 더한다.
-            if (this->uniqInt[i] >= this->uniqInt[j]) this->sortInt[i] += 1;
+            if (this->uniqInt[i] >= this->uniqInt[ii]) this->sortInt[i] += 1;
         }
     }
     // rowsInt와 rowsEnt에 중복을 제거하고 크기순서대로 정렬을 한 row에서의 index
@@ -415,10 +413,12 @@ MatrixProcess &MatrixProcess::MakeMatrixSystem(int node, AxialData *adat, Point 
     // ia에 지금까지의 0이 아닌 원소의 개수를 저장
     this->ia[node] = this->ent_num;
     this->rb[node] = xdat->F + ydat->F;
-    if (this->rb[node] != this->rb[node])
-        printf("xdat->F = %23.16e\n", xdat->F), printf("ydat->F = %23.16e\n", ydat->F), this->printPointDataError(node,
-                                                                                                                  pt), exit(
-                123);
+    if (isnan(this->rb[node])) {
+        printf("xdat->F = %23.16e\n", xdat->F);
+        printf("ydat->F = %23.16e\n", ydat->F);
+        this->printPointDataError(node, pt);
+        exit(123);
+    }
     // ja의 array의 index에 지금까지의 0이 아닌 원소의 개수를 저장
     this->ja_num = this->ent_num;
     // ja와 ent array의 원소를 저장
@@ -430,7 +430,7 @@ MatrixProcess &MatrixProcess::MakeMatrixSystem(int node, AxialData *adat, Point 
             // entdp rowsEnt의 원소를 저장
             this->ent[this->ja_num] = this->rowsEnt[i];
             // ent에 저장된 값이 NaN값인 경우
-            if (this->ent[this->ja_num] != this->ent[this->ja_num]) {
+            if (isnan(this->ent[this->ja_num])) {
                 // 해당하는 점의 정보를 출력하고 종료
                 this->printPointDataError(node, pt);
             }
@@ -461,7 +461,7 @@ MatrixProcess &MatrixProcess::calcMatrix(ControlData *cdat, AxialData *adat, Poi
     for (size_t i = 0; i < this->matrixSize + 1; i++) this->ia[i] += 1;
     for (size_t i = 0; i < this->ent_num; i++) this->ja[i] += 1;
     for (size_t i = 0; i < this->matrixSize; i++) x[i] = 0.0;
-    for (size_t i = 0; i < 64; i++) iparm[i] = 0;
+    for (int & i : iparm) i = 0;
     iparm[0] = 1;         /* No solver default */
     iparm[1] = 3;         /* Fill-in reordering from METIS */
     iparm[3] = 0;         /* No iterative-direct algorithm */
@@ -490,7 +490,7 @@ MatrixProcess &MatrixProcess::calcMatrix(ControlData *cdat, AxialData *adat, Poi
     iparm[28] = 0;
 
 
-    for (size_t i = 0; i < 64; i++) pt[i] = 0;
+    for (auto & i : pt) i = nullptr;
 
     phase = 13;
     pardiso(pt, &maxfct, &mnum, &mtype, &phase, &n, this->ent, this->ia, this->ja, &idum, &nrhs, iparm, &msglvl,
@@ -500,7 +500,7 @@ MatrixProcess &MatrixProcess::calcMatrix(ControlData *cdat, AxialData *adat, Poi
         exit(3);
     }
 
-    for (size_t i = 0; i < matrixSize; i++) {
+    for (int i = 0; i < matrixSize; i++) {
         // printf ("i = %zu, x[%zu] = %23.16e\n", i, i, x[i]);
         if (i < adat->In_Pts_Num()) pts[adat->PtsTOPts('I', i)].SetValue(x[i]);
         else pts[adat->PtsTOPts('H', i % adat->In_Pts_Num())].Phi()->SetValue(x[i]);
@@ -632,7 +632,7 @@ MatrixProcess &MatrixProcess::SettingAzimuth(Point *pt, AxialData *adat, const i
 
     if (pt->Condition() == 'D' && node >= adat->In_Pts_Num()) {
         char errorMassage[256];
-        Point *calc_pt = NULL;
+        Point *calc_pt = nullptr;
         unordered_map<char, int> array_int;
         unordered_map<char, char> opposite_azimuth;
         unordered_map<char, char> coord;
@@ -733,53 +733,53 @@ MatrixProcess &MatrixProcess::printPointDataError(int node, Point *pt) {
     // 점을 포함하는 국소 y-축선의 아래쪽끝의 좌표와 위쪽끝의 좌표를 출력
     printf("ym = %23.16e, yp = %23.16e\n\n", pt->MinMaxCoordinate('y', 'm'), pt->MinMaxCoordinate('y', 'p'));
     // 오른쪽점이 존재하는 경우, 오른쪽점의 경계조건을 출력
-    if (pt->EWNS('E', 'E') != NULL) printf("Boundary condition of E = %c\n", pt->EWNS('E', 'E')->Condition());
+    if (pt->EWNS('E', 'E')) printf("Boundary condition of E = %c\n", pt->EWNS('E', 'E')->Condition());
     // 왼쪽점이 존재하는 경우, 왼쪽점의 경계조건을 출력
-    if (pt->EWNS('W', 'W') != NULL) printf("Boundary condition of W = %c\n", pt->EWNS('W', 'W')->Condition());
+    if (pt->EWNS('W', 'W')) printf("Boundary condition of W = %c\n", pt->EWNS('W', 'W')->Condition());
     // 위쪽점이 존재하는 경우, 위쪽점의 경계조건을 출력
-    if (pt->EWNS('N', 'N') != NULL) printf("Boundary condition of N = %c\n", pt->EWNS('N', 'N')->Condition());
+    if (pt->EWNS('N', 'N')) printf("Boundary condition of N = %c\n", pt->EWNS('N', 'N')->Condition());
     // 아래쪽점이 존재하는 경우, 아래쪽점의 경계조건을 출력
-    if (pt->EWNS('S', 'S') != NULL) printf("Boundary condition of S = %c\n", pt->EWNS('S', 'S')->Condition());
+    if (pt->EWNS('S', 'S')) printf("Boundary condition of S = %c\n", pt->EWNS('S', 'S')->Condition());
     // 오른쪽의 위쪽점이 존재하는 경우, 오른쪽의 위쪽점의 경계조건을 출력
-    if (pt->EWNS('E', 'N') != NULL) printf("Boundary condition of EN = %c\n", pt->EWNS('E', 'N')->Condition());
+    if (pt->EWNS('E', 'N')) printf("Boundary condition of EN = %c\n", pt->EWNS('E', 'N')->Condition());
     // 오른쪽의 아래쪽점이 존재하는 경우, 오른쪽의 아래쪽점의 경계조건을 출력
-    if (pt->EWNS('E', 'S') != NULL) printf("Boundary condition of ES = %c\n", pt->EWNS('E', 'S')->Condition());
+    if (pt->EWNS('E', 'S')) printf("Boundary condition of ES = %c\n", pt->EWNS('E', 'S')->Condition());
     // 왼쪽의 위쪽점이 존재하는 경우, 왼쪽의 위쪽점의 경계조건을 출력
-    if (pt->EWNS('W', 'N') != NULL) printf("Boundary condition of WN = %c\n", pt->EWNS('W', 'N')->Condition());
+    if (pt->EWNS('W', 'N')) printf("Boundary condition of WN = %c\n", pt->EWNS('W', 'N')->Condition());
     // 왼쪽의 아래쪽점이 존재하는 경우, 왼쪽의 아래쪽점의 경계조건을 출력
-    if (pt->EWNS('W', 'S') != NULL) printf("Boundary condition of WS = %c\n", pt->EWNS('W', 'S')->Condition());
+    if (pt->EWNS('W', 'S')) printf("Boundary condition of WS = %c\n", pt->EWNS('W', 'S')->Condition());
     // 위쪽의 오른쪽점이 존재하는 경우, 위쪽의 오른쪽점의 경계조건을 출력
-    if (pt->EWNS('N', 'E') != NULL) printf("Boundary condition of NE = %c\n", pt->EWNS('N', 'E')->Condition());
+    if (pt->EWNS('N', 'E')) printf("Boundary condition of NE = %c\n", pt->EWNS('N', 'E')->Condition());
     // 위쪽의 왼쪽점이 존재하는 경우, 위쪽의 왼쪽점의 경계조건을 출력
-    if (pt->EWNS('N', 'W') != NULL) printf("Boundary condition of NW = %c\n", pt->EWNS('N', 'W')->Condition());
+    if (pt->EWNS('N', 'W')) printf("Boundary condition of NW = %c\n", pt->EWNS('N', 'W')->Condition());
     // 아래쪽의 오른쪽점이 존재하는 경우, 아래의 오른쪽쪽점의 경계조건을 출력
-    if (pt->EWNS('S', 'E') != NULL) printf("Boundary condition of SE = %c\n", pt->EWNS('S', 'E')->Condition());
+    if (pt->EWNS('S', 'E')) printf("Boundary condition of SE = %c\n", pt->EWNS('S', 'E')->Condition());
     // 아래쪽의 왼쪽점이 존재하는 경우, 아래쪽의 왼쪽점의 경계조건을 출력
-    if (pt->EWNS('S', 'W') != NULL) printf("Boundary condition of SW = %c\n", pt->EWNS('S', 'W')->Condition());
+    if (pt->EWNS('S', 'W')) printf("Boundary condition of SW = %c\n", pt->EWNS('S', 'W')->Condition());
     // 점의 오른쪽점이 존재하는 경우, 점의 오른쪽점의 index를 출력
-    if (pt->EWNS('E', 'E') != NULL) printf("%-6s%d\n", "E = ", pt->EWNS('E', 'E')->Index());
+    if (pt->EWNS('E', 'E')) printf("%-6s%d\n", "E = ", pt->EWNS('E', 'E')->Index());
     // 점의 왼쪽점이 존재하는 경우, 점의 왼쪽점의 index를 출력
-    if (pt->EWNS('W', 'W') != NULL) printf("%-6s%d\n", "W = ", pt->EWNS('W', 'W')->Index());
+    if (pt->EWNS('W', 'W')) printf("%-6s%d\n", "W = ", pt->EWNS('W', 'W')->Index());
     // 점의 위쪽점이 존재하는 경우, 점의 위쪽점의 index를 출력
-    if (pt->EWNS('N', 'N') != NULL) printf("%-6s%d\n", "N = ", pt->EWNS('N', 'N')->Index());
+    if (pt->EWNS('N', 'N')) printf("%-6s%d\n", "N = ", pt->EWNS('N', 'N')->Index());
     // 점의 아래쪽점이 존재하는 경우, 점의 아래쪽점의 index를 출력
-    if (pt->EWNS('S', 'S') != NULL) printf("%-6s%d\n", "S = ", pt->EWNS('S', 'S')->Index());
+    if (pt->EWNS('S', 'S')) printf("%-6s%d\n", "S = ", pt->EWNS('S', 'S')->Index());
     // 점의 오른쪽의 위쪽점이 존재하는 경우, 점의 오른쪽의 위쪽점의 index를 출력
-    if (pt->EWNS('E', 'N') != NULL) printf("%-6s%d\n", "EN = ", pt->EWNS('E', 'N')->Index());
+    if (pt->EWNS('E', 'N')) printf("%-6s%d\n", "EN = ", pt->EWNS('E', 'N')->Index());
     // 점의 오른쪽의 아래쪽점이 존재하는 경우, 점의 오른쪽의 아래쪽점의 index를 출력
-    if (pt->EWNS('E', 'S') != NULL) printf("%-6s%d\n", "ES = ", pt->EWNS('E', 'S')->Index());
+    if (pt->EWNS('E', 'S')) printf("%-6s%d\n", "ES = ", pt->EWNS('E', 'S')->Index());
     // 점의 왼쪽의 위쪽점이 존재하는 경우, 점의 왼쪽의 위쪽점의 index를 출력
-    if (pt->EWNS('W', 'N') != NULL) printf("%-6s%d\n", "WN = ", pt->EWNS('W', 'N')->Index());
+    if (pt->EWNS('W', 'N')) printf("%-6s%d\n", "WN = ", pt->EWNS('W', 'N')->Index());
     // 점의 왼쪽의 아래쪽점이 존재하는 경우, 점의 왼쪽의 아래쪽점의 index를 출력
-    if (pt->EWNS('W', 'S') != NULL) printf("%-6s%d\n", "WS = ", pt->EWNS('W', 'S')->Index());
+    if (pt->EWNS('W', 'S')) printf("%-6s%d\n", "WS = ", pt->EWNS('W', 'S')->Index());
     // 점의 위쪽의 오른쪽점이 존재하는 경우, 점의 위쪽의 오른쪽점의 index를 출력
-    if (pt->EWNS('N', 'E') != NULL) printf("%-6s%d\n", "NE = ", pt->EWNS('N', 'E')->Index());
+    if (pt->EWNS('N', 'E')) printf("%-6s%d\n", "NE = ", pt->EWNS('N', 'E')->Index());
     // 점의 위쪽의 왼쪽점이 존재하는 경우, 점의 위쪽의 왼쪽점의 index를 출력
-    if (pt->EWNS('N', 'W') != NULL) printf("%-6s%d\n", "NW = ", pt->EWNS('N', 'W')->Index());
+    if (pt->EWNS('N', 'W')) printf("%-6s%d\n", "NW = ", pt->EWNS('N', 'W')->Index());
     // 점의 아래쪽의 오른쪽점이 존재하는 경우, 점의 아래쪽의 오른쪽점의 index를 출력
-    if (pt->EWNS('S', 'E') != NULL) printf("%-6s%d\n", "SE = ", pt->EWNS('S', 'E')->Index());
+    if (pt->EWNS('S', 'E')) printf("%-6s%d\n", "SE = ", pt->EWNS('S', 'E')->Index());
     // 점의 아래쪽의 왼쪽점이 존재하는 경우, 점의 아래쪽의 왼쪽점의 index를 출력
-    if (pt->EWNS('S', 'W') != NULL) printf("%-6s%d\n", "SW = ", pt->EWNS('S', 'W')->Index());
+    if (pt->EWNS('S', 'W')) printf("%-6s%d\n", "SW = ", pt->EWNS('S', 'W')->Index());
     // arrEnt의 원소를 출력
     for (size_t j = 0; j < 26; j++) {
         // arrEnt의 원소를 출력
@@ -797,7 +797,7 @@ MatrixProcess &MatrixProcess::SettingArray(int node, AxialData *adat, Point *pt,
         // 오른쪽, 왼쪽, 위쪽, 아래쪽의 점에서의 값을 저장하기 위한 array
         this->uniqEnt[i] = 0.0;
         // arrInt에서 중복되는 점들을 제거한 index를 저장하기 위한 array
-        this->arrInt[i] = NULL;
+        this->arrInt[i] = nullptr;
         // arrInt에서 중복되는 점들을 제거한 점에서의 값을 저장하기 위한 array
         this->arrEnt[i] = 0.0;
     }
@@ -806,7 +806,7 @@ MatrixProcess &MatrixProcess::SettingArray(int node, AxialData *adat, Point *pt,
     // 행렬이 2n x 2n 이기 때문에, 14 - 26번째 원소는 1 - 13번째 원소의 반복
     for (size_t i = 13; i < 26; i++) {
         // arrInt의 원소가 존재하는 경우
-        if (this->arrInt[i - 13] != NULL) {
+        if (this->arrInt[i - 13] != nullptr) {
             // arrInt가 저장한 주소를 그대로 저장
             this->arrInt[i] = this->arrInt[i - 13];
         }
@@ -870,7 +870,7 @@ MatrixProcess &MatrixProcess::SettingArray(int node, AxialData *adat, Point *pt,
         // arrEnt의 원소가 0인 경우
         if (IsEqualDouble(this->arrEnt[i], ZeroValue)) {
             // arrInt의 원소의 값을 초기화
-            this->arrInt[i] = NULL;
+            this->arrInt[i] = nullptr;
         }
     }
 
@@ -992,11 +992,12 @@ MatrixProcess &MatrixProcess::PrintDebuggingData(AxialData *adat, Point *pt, xDa
     return *this;
 }
 
-MatrixProcess &MatrixProcess::PrintDebuggingData(AxialData *adat, Point *pt, xData *xdat, yData *ydat, double *returnValue) {
-    int node = pt->Index();
-    // int node = pt->Index () + adat->In_Pts_Num ();
-    CalcRepresenCoef(pt, xdat, ydat, true);
-    TransposeBoundaryData(pt, xdat, ydat, true);
+MatrixProcess &
+MatrixProcess::PrintDebuggingData(AxialData *adat, Point *pt, xData *xdat, yData *ydat, double *returnValue) {
+//    int node = pt->Index();
+    int node = pt->Index() + adat->In_Pts_Num();
+    CalcRepresenCoef(pt, xdat, ydat, false);
+    TransposeBoundaryData(pt, xdat, ydat, false);
     this->SettingArray(node, adat, pt, xdat, ydat);
 
     // if (*pt == 8161) {

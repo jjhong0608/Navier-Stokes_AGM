@@ -90,11 +90,15 @@ AGM(string AGL_output_file, string AGM_output_file, double initialTime, double t
     auto *pt_phi = new Point[adat.Pts_Num()];
     // psi를 저장하는 점의 class의 선언
     auto *pt_psi = new Point[adat.Pts_Num()];
+    // 이전의 phi를 저장하는 점의 class의 선언
+    auto *pt_pre_phi = new Point[adat.Pts_Num()];
+    // 이전의 psi를 저장하는 점의 class의 선언
+    auto *pt_pre_psi = new Point[adat.Pts_Num()];
 
     SettingPoints(&adat, ptU, ptV, ptP, pt_diff_u_x, pt_diff_u_y, pt_diff_v_x, pt_diff_v_y, pt_diff_u_xx, pt_diff_u_yy,
                   pt_diff_v_xx, pt_diff_v_yy, pt_hat_u, pt_hat_v, pt_pre_u, pt_pre_v, pt_old_u, pt_old_v,
                   pt_pre_diff_u_x, pt_pre_diff_u_y, pt_pre_diff_u_xx, pt_pre_diff_u_yy, pt_pre_diff_v_x,
-                  pt_pre_diff_v_y, pt_pre_diff_v_xx, pt_pre_diff_v_yy, pt_phi, pt_psi);
+                  pt_pre_diff_v_y, pt_pre_diff_v_xx, pt_pre_diff_v_yy, pt_phi, pt_psi, pt_pre_phi, pt_pre_psi);
 
     // 모든점에 대해서 반복
     for (int i = 0; i < adat.Pts_Num(); i++) {
@@ -237,6 +241,9 @@ AGM(string AGL_output_file, string AGM_output_file, double initialTime, double t
         ptU[i].Pre()->SetValue(u_ftn_Dirichlet(&ptU[i]));
         ptV[i].Pre()->SetValue(u_ftn_Dirichlet(&ptV[i]));
 
+        ptU[i].Phi()->Pre()->SetValue(u_ftn(ptU[i].Phi()));
+        ptV[i].Phi()->Pre()->SetValue(u_ftn(ptV[i].Phi()));
+
         ptU[i].Diff('x')->Diff('x')->Pre()->SetValue(u_ftn(ptU[i].Diff('x')->Diff('x')));
         ptU[i].Diff('y')->Diff('y')->Pre()->SetValue(u_ftn(ptU[i].Diff('y')->Diff('y')));
 
@@ -316,6 +323,10 @@ AGM(string AGL_output_file, string AGM_output_file, double initialTime, double t
             // ptV[i].Pre ()->SetValue (ptV[i].Vale ());
             ptU[i].Diff('x')->Diff('x')->Pre()->SetValue(ptU[i].Diff('x')->Diff('x')->Value());
             ptU[i].Diff('y')->Diff('y')->Pre()->SetValue(ptU[i].Diff('y')->Diff('y')->Value());
+            ptU[i].Phi()->Pre()->SetValue(ptU[i].Phi()->Value());
+            ptV[i].Phi()->Pre()->SetValue(ptV[i].Phi()->Value());
+
+
             ptU[i].SetTime(ptU[i].Time() + cdat.Dt());
             ptV[i].SetTime(ptV[i].Time() + cdat.Dt());
             ptP[i].SetTime(ptP[i].Time() + cdat.Dt());
@@ -400,7 +411,7 @@ AGM(string AGL_output_file, string AGM_output_file, double initialTime, double t
     FILE *sol_output = fopen(cdat.Output_Sol().c_str(), "w");
     // fprintf (sol_output, "%s\n", "# x, y, u, ux, uy, E-filed");
     for (int i = 0; i < adat.Pts_Num(); i++) {
-        fprintf(sol_output, "%9lu\t", i);
+        fprintf(sol_output, "%9d\t", i);
         fprintf(sol_output, "%23.16e\t", ptP[i].Time());
         fprintf(sol_output, "%23.16e\t", ptP[i].Coord()[0]);
         fprintf(sol_output, "%23.16e\t", ptP[i].Coord()[1]);

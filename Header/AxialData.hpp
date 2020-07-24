@@ -615,7 +615,7 @@ AxialData &AxialData::ExportAxialData(ControlData *cdat) {
 }
 
 /* 축선생성기로부터 만들어진 점과 축선의 정보들을 읽어들이는 모듈 */
-AxialData &AxialData::LoadAxialData(const string& AxialFile_input) {
+AxialData &AxialData::LoadAxialData(const string &AxialFile_input) {
     // 축선생성기로부터 만들어진 점과 축선의 정보들을 저장한 파일을 열기
     ifstream AxialFile(AxialFile_input);
 
@@ -1146,26 +1146,43 @@ AxialData &AxialData::LoadAxialData(const string& AxialFile_input) {
         double x = pts[i][0], y = pts[i][1];
         // if (y > -1.2E0 && y < 1.2E0 && this->bc_u[i] == 'N') this->bc_u[i] = 'D';
 
-        // if (fabs (x) < 1.6E0 && fabs (y) < 1.6E0) this->normal[i][0] = -this->normal[i][0], this->normal[i][1] = -this->normal[i][1];
-        // if (IsEqualDouble (x,  1.5E0) && IsEqualDouble (fabs (y), 5.0E-1)) this->normal [i][0] = -1.0E0, this->normal[i][1] =  ZeroValue;
-        // if (IsEqualDouble (x, -1.5E0) && IsEqualDouble (fabs (y), 5.0E-1)) this->normal [i][0] =  1.0E0, this->normal[i][1] =  ZeroValue;
-        // if (IsEqualDouble (y,  1.5E0) && IsEqualDouble (fabs (x), 5.0E-1)) this->normal [i][1] = -1.0E0, this->normal[i][0] =  ZeroValue;
-        // if (IsEqualDouble (y, -1.5E0) && IsEqualDouble (fabs (x), 5.0E-1)) this->normal [i][1] =  1.0E0, this->normal[i][0] =  ZeroValue;
-        //
-        // if (IsEqualDouble (x,  1.5E0) && IsEqualDouble (fabs (y), 5.0E-1)) this->normal [i][0] = -1.0E0, this->normal[i][1] =  ZeroValue;
-        // if (IsEqualDouble (x, -1.5E0) && IsEqualDouble (fabs (y), 5.0E-1)) this->normal [i][0] =  1.0E0, this->normal[i][1] =  ZeroValue;
-        // if (IsEqualDouble (y,  1.5E0) && IsEqualDouble (fabs (x), 5.0E-1)) this->normal [i][1] = -1.0E0, this->normal[i][0] =  ZeroValue;
-        // if (IsEqualDouble (y, -1.5E0) && IsEqualDouble (fabs (x), 5.0E-1)) this->normal [i][1] =  1.0E0, this->normal[i][0] =  ZeroValue;
-        //
-        // if (IsEqualDouble (x,  3.0E0) && IsEqualDouble (fabs (y), 1.0E0)) this->normal [i][0] =  1.0E0, this->normal[i][1] =  ZeroValue;
-        // if (IsEqualDouble (x, -3.0E0) && IsEqualDouble (fabs (y), 1.0E0)) this->normal [i][0] = -1.0E0, this->normal[i][1] =  ZeroValue;
-        // if (IsEqualDouble (y,  3.0E0) && IsEqualDouble (fabs (x), 1.0E0)) this->normal [i][1] =  1.0E0, this->normal[i][0] =  ZeroValue;
-        // if (IsEqualDouble (y, -3.0E0) && IsEqualDouble (fabs (x), 1.0E0)) this->normal [i][1] = -1.0E0, this->normal[i][0] =  ZeroValue;
-        //
-        // if (IsEqualDouble (x,  3.0E0) && IsEqualDouble (fabs (y), 1.0E0)) this->normal [i][0] =  1.0E0, this->normal[i][1] =  ZeroValue;
-        // if (IsEqualDouble (x, -3.0E0) && IsEqualDouble (fabs (y), 1.0E0)) this->normal [i][0] = -1.0E0, this->normal[i][1] =  ZeroValue;
-        // if (IsEqualDouble (y,  3.0E0) && IsEqualDouble (fabs (x), 1.0E0)) this->normal [i][1] =  1.0E0, this->normal[i][0] =  ZeroValue;
-        // if (IsEqualDouble (y, -3.0E0) && IsEqualDouble (fabs (x), 1.0E0)) this->normal [i][1] = -1.0E0, this->normal[i][0] =  ZeroValue;
+//        if (fabs(x) < 1.6E0 && fabs(y) < 1.6E0)
+//            this->normal[i][0] = -this->normal[i][0], this->normal[i][1] = -this->normal[i][1];
+//        if (IsEqualDouble(x, 1.5E0) && IsEqualDouble(fabs(y), 5.0E-1))
+//            this->normal[i][0] = -1.0E0, this->normal[i][1] = ZeroValue;
+//        if (IsEqualDouble(x, -1.5E0) && IsEqualDouble(fabs(y), 5.0E-1))
+//            this->normal[i][0] = 1.0E0, this->normal[i][1] = ZeroValue;
+//        if (IsEqualDouble(y, 1.5E0) && IsEqualDouble(fabs(x), 5.0E-1))
+//            this->normal[i][1] = -1.0E0, this->normal[i][0] = ZeroValue;
+//        if (IsEqualDouble(y, -1.5E0) && IsEqualDouble(fabs(x), 5.0E-1))
+//            this->normal[i][1] = 1.0E0, this->normal[i][0] = ZeroValue;
+//
+//        if (IsEqualDouble(x, 1.5E0) && IsEqualDouble(fabs(y), 5.0E-1))
+//            this->normal[i][0] = -1.0E0, this->normal[i][1] = ZeroValue;
+//        if (IsEqualDouble(x, -1.5E0) && IsEqualDouble(fabs(y), 5.0E-1))
+//            this->normal[i][0] = 1.0E0, this->normal[i][1] = ZeroValue;
+//        if (IsEqualDouble(y, 1.5E0) && IsEqualDouble(fabs(x), 5.0E-1))
+//            this->normal[i][1] = -1.0E0, this->normal[i][0] = ZeroValue;
+//        if (IsEqualDouble(y, -1.5E0) && IsEqualDouble(fabs(x), 5.0E-1))
+//            this->normal[i][1] = 1.0E0, this->normal[i][0] = ZeroValue;
+//
+//        if (IsEqualDouble(x, 3.0E0) && IsEqualDouble(fabs(y), 1.0E0))
+//            this->normal[i][0] = 1.0E0, this->normal[i][1] = ZeroValue;
+//        if (IsEqualDouble(x, -3.0E0) && IsEqualDouble(fabs(y), 1.0E0))
+//            this->normal[i][0] = -1.0E0, this->normal[i][1] = ZeroValue;
+//        if (IsEqualDouble(y, 3.0E0) && IsEqualDouble(fabs(x), 1.0E0))
+//            this->normal[i][1] = 1.0E0, this->normal[i][0] = ZeroValue;
+//        if (IsEqualDouble(y, -3.0E0) && IsEqualDouble(fabs(x), 1.0E0))
+//            this->normal[i][1] = -1.0E0, this->normal[i][0] = ZeroValue;
+//
+//        if (IsEqualDouble(x, 3.0E0) && IsEqualDouble(fabs(y), 1.0E0))
+//            this->normal[i][0] = 1.0E0, this->normal[i][1] = ZeroValue;
+//        if (IsEqualDouble(x, -3.0E0) && IsEqualDouble(fabs(y), 1.0E0))
+//            this->normal[i][0] = -1.0E0, this->normal[i][1] = ZeroValue;
+//        if (IsEqualDouble(y, 3.0E0) && IsEqualDouble(fabs(x), 1.0E0))
+//            this->normal[i][1] = 1.0E0, this->normal[i][0] = ZeroValue;
+//        if (IsEqualDouble(y, -3.0E0) && IsEqualDouble(fabs(x), 1.0E0))
+//            this->normal[i][1] = -1.0E0, this->normal[i][0] = ZeroValue;
 
 
         this->normal[i][0] = x / sqrt(x * x + y * y), normal[i][1] = y / sqrt(x * x + y * y);

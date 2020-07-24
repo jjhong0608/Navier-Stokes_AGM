@@ -1532,7 +1532,7 @@ public:
 
     double PrintDebuggingData(const string&, _xData *, _yData *, bool);
 
-    Point &PrintDebuggingData(const string, const char *);
+    Point &PrintDebuggingData(const string&, const char *);
 
     // Point & CheckRepresentationFormula (Point*, _xData*, _yData*);
     double CheckRepresentationFormula(Point *, _xData *, _yData *, bool);
@@ -1584,10 +1584,10 @@ typedef struct _yData {
 
 class MatrixProcess {
 private:
-    double *rb; // vector value    [   3*n + i] (      3 * in_pts_num )
-    int *ia;
-    int *ja;
-    double *ent;
+    double *rb{}; // vector value    [   3*n + i] (      3 * in_pts_num )
+    int *ia{};
+    int *ja{};
+    double *ent{};
     int ent_num; // total number of the matrix elements
 
     Point **arrInt;
@@ -1598,8 +1598,8 @@ private:
     double *rowsEnt;
     int *sortInt;
     int Int_num;
-    int ja_num;
-    int matrixSize;
+    int ja_num{};
+    int matrixSize{};
 
 public:
     MatrixProcess(AxialData *);

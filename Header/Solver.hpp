@@ -24,7 +24,7 @@ void Solver(ControlData *cdat, AxialData *adat, Point *pt) {
     bool ND = false;
 
     // 행렬의 크기가 2n x 2n이므로 모든점에 대해서 두번씩 반복
-    for (size_t i = 0; i < 2 * adat->Pts_Num(); i++) {
+    for (int i = 0; i < 2 * adat->Pts_Num(); i++) {
 
         // 양쪽의 conductivity가 다른 interface위의 점인 경우 넘어간다
         if (i >= adat->Pts_Num()) if (pt[i % adat->Pts_Num()] == 'I') continue;
@@ -71,7 +71,7 @@ void Solver(ControlData *cdat, AxialData *adat, Point *pt) {
     j = 0;
 
     // 행렬의 크기가 2n x 2n이므로 모든점에 대해서 두번씩 반복
-    for (size_t i = 0; i < 2 * adat->Pts_Num(); i++) {
+    for (int i = 0; i < 2 * adat->Pts_Num(); i++) {
 
         // 양쪽의 conductivity가 다른 interface위의 점인 경우 넘어간다
         if (i >= adat->Pts_Num()) if (pt[i % adat->Pts_Num()] == 'I') continue;
@@ -108,13 +108,13 @@ void Solver(ControlData *cdat, AxialData *adat, Point *pt) {
     matps.ExportMatrixData(adat);
     // // 주위점의 정보를 출력
     // FILE *EWNS_output = fopen ("EWNS.dat", "w");
-    // for (size_t i = 0; i < adat->Pts_Num (); i++) {
+    // for (int i = 0; i < adat->Pts_Num (); i++) {
     //   pt[i].ExportEWNS (EWNS_output);
     // }
     // fclose (EWNS_output);
     // // 두번째 주위점의 정보를 출력
     // FILE *EWNS2nd_output = fopen ("EWNS2nd.dat", "w");
-    // for (size_t i = 0; i < adat->Pts_Num (); i++) {
+    // for (int i = 0; i < adat->Pts_Num (); i++) {
     //   pt[i].ExportEWNS2nd (EWNS2nd_output);
     // }
     // fclose (EWNS2nd_output);
@@ -137,10 +137,22 @@ void Solver(ControlData *cdat, AxialData *adat, Point *pt) {
     // 미분의 값을 계산을 시작함을 알림
     printf("\n%s\n", "Calculate the differentiation:");
 
-    for (size_t i = 0; i < adat->Pts_Num(); i++) {
+    for (int i = 0; i < adat->Pts_Num(); i++) {
         pt[i].Diff('x')->SetValue(CalcDiff('x', pt[i].Diff('x'), &xdat, &ydat));
         pt[i].Diff('y')->SetValue(CalcDiff('y', pt[i].Diff('y'), &xdat, &ydat));
         ProgressBar(i + 1, adat->Pts_Num());
+    }
+
+    for (int i = 0; i < adat->Pts_Num(); ++i) {
+        for (const auto &item : {'x', 'y'}) {
+            if (isnan(pt[i].Diff(item)->Value())) {
+                for (const auto &k : {'E', 'W', 'N', 'S'}) {
+                    if (pt[i].EWNS(k, k))
+                        if (pt[i].EWNS(k, k)->Condition() == 'C')
+                            pt[i].Diff(item)->SetValue(pt[i].EWNS(k, k)->Diff(item)->Value());
+                }
+            }
+        }
     }
 
     // 미분의 값의 계산이 끝났을 알림
@@ -150,30 +162,47 @@ void Solver(ControlData *cdat, AxialData *adat, Point *pt) {
     // 미분의 값을 계산을 시작함을 알림
     printf("\n%s\n", "Calculate the twice differentiation:");
 
-    for (size_t i = 0; i < adat->Pts_Num(); i++) {
+    for (int i = 0; i < adat->Pts_Num(); i++) {
         pt[i].Diff('x')->Diff('x')->SetValue(CalcDiffDiff('x', pt[i].Diff('x')->Diff('x'), &xdat, &ydat));
         pt[i].Diff('y')->Diff('y')->SetValue(CalcDiffDiff('y', pt[i].Diff('y')->Diff('y'), &xdat, &ydat));
         ProgressBar(i + 1, adat->Pts_Num());
     }
 
+    for (int i = 0; i < adat->Pts_Num(); ++i) {
+        for (const auto &item : {'x', 'y'}) {
+            if (isnan(pt[i].Diff(item)->Diff(item)->Value())) {
+                for (const auto &k : {'E', 'W', 'N', 'S'}) {
+                    if (pt[i].EWNS(k, k))
+                        if (pt[i].EWNS(k, k)->Condition() == 'C')
+                            pt[i].Diff(item)->Diff(item)->SetValue(pt[i].EWNS(k, k)->Diff(item)->Value());
+                }
+            }
+        }
+    }
+
     // 미분의 값의 계산이 끝났을 알림
     printf("\n%s\n", "The twice differentiation is calculated");
 
-  double result = ZeroValue;
-  double maxResult = ZeroValue;
-  int    maxIdx = -1;
+    double result = ZeroValue;
+    double maxResult = ZeroValue;
+    int maxIdx = -1;
 
-  for (size_t i = 0; i < adat->Pts_Num (); i++) {
-    // if (pt[i] == 'N') pt[i].SetCondition ('D'), ND = true;
-    matps.PrintDebuggingData (adat, &pt[i], &xdat, &ydat, &result);
-    if (maxResult < fabs (result)) maxResult = fabs (result), maxIdx = i;
-    // if (ND) pt[i].SetCondition ('N'), ND = false;
-  }
-  maxIdx = 993;
-  // if (pt[maxIdx] == 'N') pt[maxIdx].SetCondition ('D'), ND = true;
-  pt[maxIdx].PrintDebuggingData ("11111", &xdat, &ydat, true);
-  printf ("maxResult = %23.16e\n", maxResult);
-  // if (ND) pt[maxIdx].SetCondition ('N'), ND = false;
+    for (int i = 0; i < adat->Pts_Num(); i++) {
+        if (pt[i] == 'N') pt[i].SetCondition('D'), ND = true;
+        matps.PrintDebuggingData(adat, &pt[i], &xdat, &ydat, &result);
+        if (maxResult < fabs(result)) maxResult = fabs(result), maxIdx = i;
+        if (ND) pt[i].SetCondition('N'), ND = false;
+
+        if (fabs(pt[i].Coord()[0] - 0.15) < 1.0E-8 && pt[i].Coord()[1] > ZeroValue) {
+            maxIdx = i;
+            break;
+        }
+    }
+
+    if (pt[maxIdx] == 'N') pt[maxIdx].SetCondition('D'), ND = true;
+    pt[maxIdx].Diff('x')->Diff('x')->PrintDebuggingData("11111", &xdat, &ydat, false);
+    printf("maxResult = %23.16e\n", maxResult);
+    if (ND) pt[maxIdx].SetCondition('N'), ND = false;
 
 }
 

@@ -21,9 +21,6 @@ void CalcRepresenCoef(Point *pt, xData *xdat, yData *ydat, bool is_sol) {
   3: Infinity - Dirichlet
   4: Dirichlet - Infinity
   */
-    if (*pt == 'C') {
-
-    }
 
     int bdx = 0, bdy = 0;
     // 국소 x-축선의 시작점과 끝점의 x-좌표와 현재점의 x-좌표
@@ -40,10 +37,9 @@ void CalcRepresenCoef(Point *pt, xData *xdat, yData *ydat, bool is_sol) {
     double mpy1 = HeadVelocity(pt)->MaterialProperty();
     // 국소 y-축선의 끝점의 conductivity
     double mpy2 = HeadVelocity(pt)->MaterialProperty();
+
     // 참조하는 점이 주의의 conductivity가 다른 Interface위의 점인경우
     if (pt->Condition() == 'I') SettingMaterialProperties(HeadVelocity(pt), &mpx1, &mpx2, &mpy1, &mpy2);
-    //
-    // SettingGreenShape (pt->Pressure (), &bdx, &bdy);
     //
     InitializationCoef(xdat, ydat, "XY");
     //
@@ -107,55 +103,102 @@ void CalcRepresenCoef(Point *pt, xData *xdat, yData *ydat, bool is_sol) {
 void RightHandSide(Point *pt, xData *xdat, yData *ydat) {
     // 현재점에서의 우변의 f를 저장
     xdat->F += xdat->Cf * pt->F();
+    xdat->F += xdat->Cphi * pt->Phi()->Pre()->Value();
     ydat->F += ydat->Cf * pt->F();
+    ydat->F += ydat->Cphi * pt->Phi()->Pre()->Value();
     // 오른쪽점이 존재하는 경우, 오른쪽점에서의 우변의 f를 저장
-    if (pt->EWNS('E', 'E') != nullptr) xdat->F += xdat->Ef * pt->EWNS('E', 'E')->F();
+    if (pt->EWNS('E', 'E')) {
+        xdat->F += xdat->Ef * pt->EWNS('E', 'E')->F();
+        xdat->F += xdat->Ephi * pt->EWNS('E', 'E')->Phi()->Pre()->Value();
+    }
     // 왼쪽점이 존재하는 경우, 왼쪽점에서의 우변의 f를 저장
-    if (pt->EWNS('W', 'W') != nullptr) xdat->F += xdat->Wf * pt->EWNS('W', 'W')->F();
+    if (pt->EWNS('W', 'W')) {
+        xdat->F += xdat->Wf * pt->EWNS('W', 'W')->F();
+        xdat->F += xdat->Wphi * pt->EWNS('W', 'W')->Phi()->Pre()->Value();
+    }
     // 위쪽점이 존재하는 경우, 위쪽점에서의 우변의 f를 저장
-    if (pt->EWNS('N', 'N') != nullptr) ydat->F += ydat->Nf * pt->EWNS('N', 'N')->F();
+    if (pt->EWNS('N', 'N')) {
+        ydat->F += ydat->Nf * pt->EWNS('N', 'N')->F();
+        ydat->F += ydat->Nphi * pt->EWNS('N', 'N')->Phi()->Pre()->Value();
+    }
     // 아래쪽점이 존재하는 경우, 아래쪽점에서의 우변의 f를 저장
-    if (pt->EWNS('S', 'S') != nullptr) ydat->F += ydat->Sf * pt->EWNS('S', 'S')->F();
+    if (pt->EWNS('S', 'S')) {
+        ydat->F += ydat->Sf * pt->EWNS('S', 'S')->F();
+        ydat->F += ydat->Sphi * pt->EWNS('S', 'S')->Phi()->Pre()->Value();
+    }
     // 오른쪽의 위쪽점이 존재하는 경우, 오른쪽의 위쪽점에서의 우변의 f를 저장
-    if (pt->EWNS('E', 'N') != nullptr) xdat->F += xdat->ENf * pt->EWNS('E', 'N')->F();
+    if (pt->EWNS('E', 'N')) {
+        xdat->F += xdat->ENf * pt->EWNS('E', 'N')->F();
+        xdat->F += xdat->ENphi * pt->EWNS('E', 'N')->Phi()->Pre()->Value();
+    }
     // 오른쪽의 아래쪽점이 존재하는 경우, 오른쪽의 아래쪽점에서의 우변의 f를 저장
-    if (pt->EWNS('E', 'S') != nullptr) xdat->F += xdat->ESf * pt->EWNS('E', 'S')->F();
+    if (pt->EWNS('E', 'S')) {
+        xdat->F += xdat->ESf * pt->EWNS('E', 'S')->F();
+        xdat->F += xdat->ESphi * pt->EWNS('E', 'S')->Phi()->Pre()->Value();
+    }
     // 왼쪽의 위쪽점이 존재하는 경우, 왼쪽의 위쪽점에서의 우변의 f를 저장
-    if (pt->EWNS('W', 'N') != nullptr) xdat->F += xdat->WNf * pt->EWNS('W', 'N')->F();
+    if (pt->EWNS('W', 'N')) {
+        xdat->F += xdat->WNf * pt->EWNS('W', 'N')->F();
+        xdat->F += xdat->WNphi * pt->EWNS('W', 'N')->Phi()->Pre()->Value();
+    }
     // 왼쪽의 아래쪽점이 존재하는 경우, 왼쪽의 아래쪽점에서의 우변의 f를 저장
-    if (pt->EWNS('W', 'S') != nullptr) xdat->F += xdat->WSf * pt->EWNS('W', 'S')->F();
+    if (pt->EWNS('W', 'S')) {
+        xdat->F += xdat->WSf * pt->EWNS('W', 'S')->F();
+        xdat->F += xdat->WSphi * pt->EWNS('W', 'S')->Phi()->Pre()->Value();
+    }
     // 위쪽의 오른쪽점이 존재하는 경우, 위쪽의 오른쪽점에서의 우변의 f를 저장
-    if (pt->EWNS('N', 'E') != nullptr) ydat->F += ydat->NEf * pt->EWNS('N', 'E')->F();
+    if (pt->EWNS('N', 'E')) {
+        ydat->F += ydat->NEf * pt->EWNS('N', 'E')->F();
+        ydat->F += ydat->NEphi * pt->EWNS('N', 'E')->Phi()->Pre()->Value();
+    }
     // 위쪽의 왼쪽점이 존재하는 경우, 위쪽의 왼쪽점에서의 우변의 f를 저장
-    if (pt->EWNS('N', 'W') != nullptr) ydat->F += ydat->NWf * pt->EWNS('N', 'W')->F();
+    if (pt->EWNS('N', 'W')) {
+        ydat->F += ydat->NWf * pt->EWNS('N', 'W')->F();
+        ydat->F += ydat->NWphi * pt->EWNS('N', 'W')->Phi()->Pre()->Value();
+    }
     // 아래쪽의 오른쪽점이 존재하는 경우, 아래쪽의 오른쪽점에서의 우변의 f를 저장
-    if (pt->EWNS('S', 'E') != nullptr) ydat->F += ydat->SEf * pt->EWNS('S', 'E')->F();
+    if (pt->EWNS('S', 'E')) {
+        ydat->F += ydat->SEf * pt->EWNS('S', 'E')->F();
+        ydat->F += ydat->SEphi * pt->EWNS('S', 'E')->Phi()->Pre()->Value();
+    }
     // 아래쪽의 왼쪽점이 존재하는 경우, 아래쪽의 왼쪽점에서의 우변의 f를 저장
-    if (pt->EWNS('S', 'W') != nullptr) ydat->F += ydat->SWf * pt->EWNS('S', 'W')->F();
+    if (pt->EWNS('S', 'W')) {
+        ydat->F += ydat->SWf * pt->EWNS('S', 'W')->F();
+        ydat->F += ydat->SWphi * pt->EWNS('S', 'W')->Phi()->Pre()->Value();
+    }
     // f가 우변이기 때문에 -1을 곱함
-    xdat->F = -5.0E-1 * xdat->F;
-    ydat->F = -5.0E-1 * ydat->F;
+    xdat->F = -xdat->F;
+    ydat->F = -ydat->F;
 }
 
 void RightHandSideDirichlet(Point *pt, Point *calc_pt, xData *xdat, yData *ydat) {
 
-    unordered_map<char, double> val;
+    unordered_map<char, double> val, phi;
     unordered_map<char, char> opposite_azimuth;
     val['E'] = xdat->Ef, val['W'] = xdat->Wf;
     val['N'] = ydat->Nf, val['S'] = ydat->Sf;
+    phi['E'] = xdat->Ephi, phi['W'] = xdat->Wphi;
+    phi['N'] = ydat->Nphi, phi['S'] = ydat->Sphi;
     opposite_azimuth['E'] = 'W', opposite_azimuth['W'] = 'E';
     opposite_azimuth['N'] = 'S', opposite_azimuth['S'] = 'N';
 
     xdat->F += xdat->Cf * calc_pt->F();
+    xdat->F += xdat->Cphi * calc_pt->Phi()->Pre()->Value();
     ydat->F += ydat->Cf * calc_pt->F();
+    ydat->F += ydat->Cphi * calc_pt->Phi()->Pre()->Value();
+
     for (const auto &i : {'E', 'W'})
         if (calc_pt->EWNS(i, i))
             if (calc_pt->EWNS(i, i)->EWNS(i, i))
                 if (calc_pt->EWNS(i, i)->EWNS(i, i) == pt) {
                     xdat->F += val[i] * pt->F();
-                    if (calc_pt->EWNS(opposite_azimuth[i], opposite_azimuth[i]))
+                    xdat->F += phi[i] * pt->Phi()->Pre()->Value();
+                    if (calc_pt->EWNS(opposite_azimuth[i], opposite_azimuth[i])) {
                         xdat->F += val[opposite_azimuth[i]] *
                                    calc_pt->EWNS(opposite_azimuth[i], opposite_azimuth[i])->F();
+                        xdat->F += phi[opposite_azimuth[i]] *
+                                   calc_pt->EWNS(opposite_azimuth[i], opposite_azimuth[i])->Phi()->Pre()->Value();
+                    }
                     else PrintError("RightHandSideDirichlet");
                 }
 
@@ -164,160 +207,25 @@ void RightHandSideDirichlet(Point *pt, Point *calc_pt, xData *xdat, yData *ydat)
             if (calc_pt->EWNS(i, i)->EWNS(i, i))
                 if (calc_pt->EWNS(i, i)->EWNS(i, i) == pt) {
                     ydat->F += val[i] * pt->F();
-                    if (calc_pt->EWNS(opposite_azimuth[i], opposite_azimuth[i]))
+                    ydat->F += phi[i] * pt->Phi()->Pre()->Value();
+                    if (calc_pt->EWNS(opposite_azimuth[i], opposite_azimuth[i])) {
                         ydat->F += val[opposite_azimuth[i]] *
                                    calc_pt->EWNS(opposite_azimuth[i], opposite_azimuth[i])->F();
+                        ydat->F += phi[opposite_azimuth[i]] *
+                                   calc_pt->EWNS(opposite_azimuth[i], opposite_azimuth[i])->Phi()->Pre()->Value();
+                    }
                     else PrintError("RightHandSideDirichlet");
                 }
     // f가 우변이기 때문에 -1을 곱함
-    xdat->F = -5.0E-1 * xdat->F;
-    ydat->F = -5.0E-1 * ydat->F;
-
-}
-
-void RightHandSideNeumann(Point *pt, xData *xdat, yData *ydat) {
-    char errorMassage[256];
-    unordered_map<char, double> eVal;
-    unordered_map<char, double> wVal;
-    unordered_map<char, double> nVal;
-    unordered_map<char, double> sVal;
-    unordered_map<char, char> opposite_azimuth;
-    unordered_map<char, unordered_map<char, double>> val;
-    opposite_azimuth['E'] = 'W', opposite_azimuth['W'] = 'E';
-    opposite_azimuth['N'] = 'S', opposite_azimuth['S'] = 'N';
-    val['E'] = eVal, val['W'] = wVal;
-    val['N'] = nVal, val['S'] = sVal;
-    val['E']['E'] = xdat->Ef, val['E']['N'] = xdat->ENf, val['E']['S'] = xdat->ESf;
-    val['W']['W'] = xdat->Wf, val['W']['N'] = xdat->WNf, val['W']['S'] = xdat->WSf;
-    val['N']['N'] = ydat->Nf, val['N']['E'] = ydat->NEf, val['N']['W'] = ydat->NWf;
-    val['S']['S'] = ydat->Sf, val['S']['E'] = ydat->SEf, val['S']['W'] = ydat->SWf;
-
-    xdat->F += xdat->Cf * pt->F();
-    ydat->F += ydat->Cf * pt->F();
-
-    bool idx = false;
-
-    for (auto &i : {'N', 'S'})
-        if (pt->IsBoundary(opposite_azimuth[i]))
-            for (auto &j : {i, 'E', 'W'}) {
-                if (pt->EWNS2nd(i, j)) ydat->F += val[i][j] * pt->EWNS2nd(i, j)->F();
-                else if (i == j) idx = true;
-                else if (idx)
-                    sprintf(errorMassage, "RightHandSideNeumann, pt->EWNS2nd (%c, %c) does not exist.", i,
-                            j), PrintError(errorMassage);
-            }
-
-    // f가 우변이기 때문에 -1을 곱함
     xdat->F = -xdat->F;
     ydat->F = -ydat->F;
+
 }
 
 /* 경계근처에서의 해의 표현식을 처리 */
 void TransposeBoundaryData(Point *pt, xData *xdat, yData *ydat, bool is_sol) {
     if (pt->Condition() == 'N') TransposeNeumannBoundaryData(pt, xdat, ydat);
     else if (pt->Condition() != 'D') TransposeOtherBoundaryData(pt, xdat, ydat);
-}
-
-/* 경계에서의 phi값을 부여 */
-void AssignPhivalue(AxialData *adat, Point *pt) {
-    for (size_t i = 0; i < adat->Pts_Num(); i++) AssignPhi(&pt[i]);
-}
-
-int AssignPhi(Point *pt) {
-    char azimu[4] = {'E', 'W', 'N', 'S'};
-    char bound[3] = {'D', 'N', 'F'};
-    char inner[3] = {'C', 'I', 'M'};
-
-    for (const auto &i : bound)
-        if (pt->Condition() == i)
-            for (const auto &j : azimu)
-                if (pt->EWNS(j, j))
-                    for (const auto &k : inner)
-                        if (pt->EWNS(j, j)->Condition() == k) {
-                            pt->Phi()->SetValue(pt->EWNS(j, j)->Phi()->Value());
-                            return 0;
-                        }
-
-    return 1;
-}
-
-/* 경계와 Interface가 만나는지 확인하는 모듈 */
-bool SetInterfaceBoundary(Point *pt, char EWNS) {
-    // 현재점이 Interface위의 점인 경우 거짓값을 return
-    if (pt->Condition() != 'I' && pt->Condition() != 'M') return false;
-    // 오른쪽을 참조
-    if (EWNS == 'E' || EWNS == 'e') {
-        // 오른쪽점이 경계점인 경우
-        if (pt->EWNS('E', 'E') == pt) {
-            // 위쪽점이 존재하고 위쪽점의 오른쪽점이 존재하고 위쪽점의 오른쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('N', 'N') != nullptr)
-                if (pt->EWNS('N', 'N')->EWNS('E', 'E') != nullptr)
-                    if (pt->EWNS('N', 'N')->EWNS('E', 'E')->Condition() == 'N')return true;
-            // 아래쪽점이 존재하고 아래쪽점의 오른쪽점이 존재하고 아래쪽점의 오른쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('S', 'S') != nullptr)
-                if (pt->EWNS('S', 'S')->EWNS('E', 'E') != nullptr)
-                    if (pt->EWNS('S', 'S')->EWNS('E', 'E')->Condition() == 'N')return true;
-            // 위쪽의 오른쪽점이 존재하고 위쪽의 오른쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('N', 'E') != nullptr) if (pt->EWNS('N', 'E')->Condition() == 'N') return true;
-            // 아래쪽의 오른쪽점이 존재하고 아래쪽의 오른쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('S', 'E') != nullptr) if (pt->EWNS('S', 'E')->Condition() == 'N') return true;
-        }
-    }
-    // 왼쪽을 참조
-    if (EWNS == 'W' || EWNS == 'w') {
-        // 왼쪽점이 경계점인 경우
-        if (pt->EWNS('W', 'W') == pt) {
-            // 위쪽점이 존재하고 위쪽점의 왼쪽점이 존재하고 위쪽점의 왼쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('N', 'N') != nullptr)
-                if (pt->EWNS('N', 'N')->EWNS('W', 'W') != nullptr)
-                    if (pt->EWNS('N', 'N')->EWNS('W', 'W')->Condition() == 'N')return true;
-            // 아래쪽점이 존재하고 아래쪽점의 왼쪽점이 존재하고 아래쪽점의 왼쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('S', 'S') != nullptr)
-                if (pt->EWNS('S', 'S')->EWNS('W', 'W') != nullptr)
-                    if (pt->EWNS('S', 'S')->EWNS('W', 'W')->Condition() == 'N')return true;
-            // 위쪽의 왼쪽점이 존재하고 위쪽의 왼쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('N', 'W') != nullptr) if (pt->EWNS('N', 'W')->Condition() == 'N') return true;
-            // 아래쪽의 왼쪽점이 존재하고 아래쪽의 왼쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('S', 'W') != nullptr) if (pt->EWNS('S', 'W')->Condition() == 'N') return true;
-        }
-    }
-    // 위쪽을 참조
-    if (EWNS == 'N' || EWNS == 'n') {
-        // 위쪽점이 경계점인 경우
-        if (pt->EWNS('N', 'N') == pt) {
-            // 오른쪽점이 존재하고 오른쪽점의 위쪽점이 존재하고 오른쪽점의 위쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('E', 'E') != nullptr)
-                if (pt->EWNS('E', 'E')->EWNS('N', 'N') != nullptr)
-                    if (pt->EWNS('E', 'E')->EWNS('N', 'N')->Condition() == 'N')return true;
-            // 왼쪽점이 존재하고 왼쪽점의 위쪽점이 존재하고 왼쪽점의 위쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('W', 'W') != nullptr)
-                if (pt->EWNS('W', 'W')->EWNS('N', 'N') != nullptr)
-                    if (pt->EWNS('W', 'W')->EWNS('N', 'N')->Condition() == 'N')return true;
-            // 오른쪽의 위쪽점이 존재하고 오른쪽의 위쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('E', 'N') != nullptr) if (pt->EWNS('E', 'N')->Condition() == 'N') return true;
-            // 왼쪽의 위쪽점이 존재하고 왼쪽의 위쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('W', 'N') != nullptr) if (pt->EWNS('W', 'N')->Condition() == 'N') return true;
-        }
-    }
-    // 아래쪽을 참조
-    if (EWNS == 'S' || EWNS == 's') {
-        // 아래쪽점이 경계점인 경우
-        if (pt->EWNS('S', 'S') == pt) {
-            // 오른쪽점이 존재하고 오른쪽점의 아래쪽점이 존재하고 오른쪽점의 아래쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('E', 'E') != nullptr)
-                if (pt->EWNS('E', 'E')->EWNS('S', 'S') != nullptr)
-                    if (pt->EWNS('E', 'E')->EWNS('S', 'S')->Condition() == 'N')return true;
-            // 왼쪽점이 존재하고 왼쪽점의 아래쪽점이 존재하고 왼쪽점의 아래쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('W', 'W') != nullptr)
-                if (pt->EWNS('W', 'W')->EWNS('S', 'S') != nullptr)
-                    if (pt->EWNS('W', 'W')->EWNS('S', 'S')->Condition() == 'N')return true;
-            // 오른쪽의 아래쪽점이 존재하고 오른쪽의 아래쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('E', 'S') != nullptr) if (pt->EWNS('E', 'S')->Condition() == 'N') return true;
-            // 왼쪽의 아래쪽점이 존재하고 왼쪽의 아래쪽점의 경계조건이 Neumann 조건이 주어진 경우, 참값을 return
-            if (pt->EWNS('W', 'S') != nullptr) if (pt->EWNS('W', 'S')->Condition() == 'N') return true;
-        }
-    }
-    return false;
 }
 
 /* 축선의 양끝점중 한 개의 점의 경계조건이 Infinity 혹은 Singularity일 때, 정확한 적분을 계산하는 모듈 */
@@ -779,79 +687,6 @@ void ExactIntegration(char xy, xData *xdat, yData *ydat, int nD, int bdx, int bd
     if (xy != 'X' && xy != 'x' && xy != 'Y' && xy != 'y') PrintError("ExactIntegration");
 }
 
-// 해의 표현식의 계수의 확인하는 모듈
-double
-CheckRepresentationFormula(Point *pt, xData *xdat, yData *ydat, int idx, double xm, double xb, double xp, double ym,
-                           double yb, double yp, int bdx, int bdy) {
-    double xx = xdat->Cu * u_ftn(xb, yb) + xdat->Eu * dudx_ftn(xp, yb) + xdat->Wu * u_ftn(xm, yb) +
-                xdat->Cphi * phi_ftn(xb, yb) + xdat->Ephi * phi_ftn(xp, yb) + xdat->Wphi * phi_ftn(xm, yb) - xdat->F;
-    double yy = ydat->Cu * u_ftn(xb, yb) + ydat->Nu * u_ftn(xb, yp) + ydat->Su * u_ftn(xb, ym) +
-                ydat->Cphi * phi_ftn(xb, yb) + ydat->Nphi * phi_ftn(xb, yp) + ydat->Sphi * phi_ftn(xb, ym) - ydat->F;
-    double zz = 0.0;
-
-    if (xx > yy) zz = fabs(xx);
-    else zz = fabs(yy);
-
-    // if (zz > 1e-10) {
-    if (pt->Index() == idx) {
-        printf("\n");
-        printf("%-8s%23.16e\n", "XM   = ", xm);
-        printf("%-8s%23.16e\n", "XB   = ", xb);
-        printf("%-8s%23.16e\n", "XP   = ", xp);
-        printf("%-8s%23.16e\n", "YM   = ", ym);
-        printf("%-8s%23.16e\n", "YB   = ", yb);
-        printf("%-8s%23.16e\n", "YP   = ", yp);
-        printf("\n");
-        printf("%-8s%c\n", "cond = ", pt->Condition());
-        printf("%-8s%d\n", "bdx  = ", bdx);
-        printf("%-8s%d\n", "bdy  = ", bdy);
-        printf("\n");
-        printf("%-8s%23.16e\n", "Cu   = ", xdat->Cu);
-        printf("%-8s%23.16e\n", "Eu   = ", xdat->Eu);
-        printf("%-8s%23.16e\n", "Wu   = ", xdat->Wu);
-        printf("%-8s%23.16e\n", "Cphi = ", xdat->Cphi);
-        printf("%-8s%23.16e\n", "Ephi = ", xdat->Ephi);
-        printf("%-8s%23.16e\n", "Wphi = ", xdat->Wphi);
-        printf("%-8s%23.16e\n", "F    = ", xdat->F);
-        printf("%-8s%23.16e\n", "EF   = ", xdat->Ef);
-        printf("%-8s%23.16e\n", "CF   = ", xdat->Cf);
-        printf("%-8s%23.16e\n", "WF   = ", xdat->Wf);
-        printf("\n");
-        printf("%-8s%23.16e\n", "Cu   = ", ydat->Cu);
-        printf("%-8s%23.16e\n", "Nu   = ", ydat->Nu);
-        printf("%-8s%23.16e\n", "Su   = ", ydat->Su);
-        printf("%-8s%23.16e\n", "Cphi = ", ydat->Cphi);
-        printf("%-8s%23.16e\n", "Nphi = ", ydat->Nphi);
-        printf("%-8s%23.16e\n", "Sphi = ", ydat->Sphi);
-        printf("%-8s%23.16e\n", "F    = ", ydat->F);
-        printf("%-8s%23.16e\n", "Nf    = ", ydat->Nf);
-        printf("%-8s%23.16e\n", "Cf    = ", ydat->Cf);
-        printf("%-8s%23.16e\n", "Sf    = ", ydat->Sf);
-        printf("\n");
-        printf("%-8s%23.16e\n", "u (xb, yb) = ", u_ftn(xb, yb));
-        printf("%-8s%23.16e\n", "u (xm, yb) = ", u_ftn(xm, yb));
-        printf("%-8s%23.16e\n", "u (xp, yb) = ", u_ftn(xp, yb));
-        printf("%-8s%23.16e\n", "u (xb, ym) = ", u_ftn(xb, ym));
-        printf("%-8s%23.16e\n", "u (xb, yp) = ", u_ftn(xb, yp));
-        printf("%-8s%23.16e\n", "phi (xb, yb) = ", phi_ftn(xb, yb));
-        printf("%-8s%23.16e\n", "phi (xm, yb) = ", phi_ftn(xm, yb));
-        printf("%-8s%23.16e\n", "phi (xp, yb) = ", phi_ftn(xp, yb));
-        printf("%-8s%23.16e\n", "phi (xb, ym) = ", phi_ftn(xb, ym));
-        printf("%-8s%23.16e\n", "phi (xb, yp) = ", phi_ftn(xb, yp));
-        printf("\n");
-        printf("%-35s%23.16e\n", "Representation formula on x = ",
-               (xdat->Cu * u_ftn(xb, yb) + xdat->Eu * dudx_ftn(xp, yb) + xdat->Wu * u_ftn(xm, yb) +
-                xdat->Cphi * phi_ftn(xb, yb) + xdat->Ephi * phi_ftn(xp, yb) + xdat->Wphi * phi_ftn(xm, yb) - xdat->F));
-        printf("%-35s%23.16e\n", "Representation formula on y = ",
-               (ydat->Cu * u_ftn(xb, yb) + ydat->Nu * u_ftn(xb, yp) + ydat->Su * u_ftn(xb, ym) +
-                ydat->Cphi * phi_ftn(xb, yb) + ydat->Nphi * phi_ftn(xb, yp) + ydat->Sphi * phi_ftn(xb, ym) - ydat->F));
-
-        return zz;
-    }
-    // }
-    exit(1);
-}
-
 /* y-축선에서의 u의 계수를 계산 */
 double CalcVerticalUCoefficient(char NS, double xb, double yb, double yp, double ym, int bdy, double mp) {
     // 위쪽점을 참조하는 경우, y-축선의 위쪽점에서의 u의 계수를 return
@@ -878,14 +713,14 @@ double CalcHorizontalUCoefficient(char EW, double xb, double yb, double xp, doub
 double CalcVerticalPHICoefficient(char NS, double xb, double yb, double yp, double ym, int bdy, double mp) {
     // 위쪽점을 참조하는 경우, y-축선의 위쪽점에서의 phi의 계수를 return
     if (NS == 'N')
-        return -greens_integral(4, ym, yb, yp, xb, yb, 2, bdy, mp, mp) -
-               (greens_integral(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
-                greens_integral(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yb - ym) / (yp - ym);
+        return -5.0E-1 * greens_integral(4, ym, yb, yp, xb, yb, 2, bdy, mp, mp) -
+               (5.0E-1 * greens_integral(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
+                5.0E-1 * greens_integral(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yb - ym) / (yp - ym);
     // 아래쪽점을 참조하는 경우, y-축선의 아래쪽점에서의 phi의 계수를 return
     if (NS == 'S')
-        return -greens_integral(1, ym, yb, yp, xb, yb, 2, bdy, mp, mp) -
-               (greens_integral(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
-                greens_integral(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yp - yb) / (yp - ym);
+        return -5.0E-1 * greens_integral(1, ym, yb, yp, xb, yb, 2, bdy, mp, mp) -
+               (5.0E-1 * greens_integral(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
+                5.0E-1 * greens_integral(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yp - yb) / (yp - ym);
     // 잘못된 참조의 경우, 에러메시지를 출력하고 종료
     PrintError("CalcVerticalPHICoefficient");
     exit(1);
@@ -895,14 +730,14 @@ double CalcVerticalPHICoefficient(char NS, double xb, double yb, double yp, doub
 double CalcHorizontalPHICoefficient(char EW, double xb, double yb, double xp, double xm, int bdx, double mp) {
     // 오른쪽점을 참조하는 경우, x-축선의 오른쪽점에서의 phi의 계수를 return
     if (EW == 'E')
-        return greens_integral(4, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-               (greens_integral(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-                greens_integral(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xb - xm) / (xp - xm);
+        return 5.0E-1 * greens_integral(4, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+               (5.0E-1 * greens_integral(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+                5.0E-1 * greens_integral(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xb - xm) / (xp - xm);
     // 왼쪽점을 참조하는 경우, x-축선의 왼쪽점에서의 phi의 계수를 return
     if (EW == 'W')
-        return greens_integral(1, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-               (greens_integral(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-                greens_integral(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xp - xb) / (xp - xm);
+        return 5.0E-1 * greens_integral(1, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+               (5.0E-1 * greens_integral(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+                5.0E-1 * greens_integral(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xp - xb) / (xp - xm);
     // 잘못된 참조의 경우, 에러메시지를 출력하고 종료
     PrintError("CalcHorizontalPHICoefficient");
     exit(1);
@@ -912,14 +747,14 @@ double CalcHorizontalPHICoefficient(char EW, double xb, double yb, double xp, do
 double CalcVerticalFCoefficient(char NS, double xb, double yb, double yp, double ym, int bdy, double mp) {
     // 위쪽점을 참조하는 경우, y-축선의 위쪽점에서의 f의 계수를 return
     if (NS == 'N')
-        return greens_integral(4, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
-               (greens_integral(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
-                greens_integral(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yb - ym) / (yp - ym);
+        return 5.0E-1 * greens_integral(4, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
+               (5.0E-1 * greens_integral(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
+                5.0E-1 * greens_integral(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yb - ym) / (yp - ym);
     // 아래쪽점을 참조하는 경우, y-축선의 아래쪽점에서의 f의 계수를 return
     if (NS == 'S')
-        return greens_integral(1, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
-               (greens_integral(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
-                greens_integral(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yp - yb) / (yp - ym);
+        return 5.0E-1 * greens_integral(1, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
+               (5.0E-1 * greens_integral(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
+                5.0E-1 * greens_integral(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yp - yb) / (yp - ym);
     // 잘못된 참조의 경우, 에러메시지를 출력하고 종료
     PrintError("CalcVerticalFCoefficient");
     exit(1);
@@ -929,14 +764,14 @@ double CalcVerticalFCoefficient(char NS, double xb, double yb, double yp, double
 double CalcHorizontalFCoefficient(char EW, double xb, double yb, double xp, double xm, int bdx, double mp) {
     // 오른쪽점을 참조하는 경우, x-축선의 오른쪽점에서의 phi의 계수를 return
     if (EW == 'E')
-        return greens_integral(4, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-               (greens_integral(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-                greens_integral(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xb - xm) / (xp - xm);
+        return 5.0E-1 * greens_integral(4, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+               (5.0E-1 * greens_integral(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+                5.0E-1 * greens_integral(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xb - xm) / (xp - xm);
     // 왼쪽점을 참조하는 경우, x-축선의 왼쪽점에서의 phi의 계수를 return
     if (EW == 'W')
-        return greens_integral(1, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-               (greens_integral(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-                greens_integral(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xp - xb) / (xp - xm);
+        return 5.0E-1 * greens_integral(1, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+               (5.0E-1 * greens_integral(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+                5.0E-1 * greens_integral(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xp - xb) / (xp - xm);
     // 잘못된 참조의 경우, 에러메시지를 출력하고 종료
     PrintError("CalcHorizontalFCoefficient");
     exit(1);
@@ -968,14 +803,14 @@ double CalcHorizontalDiffUCoefficient(char EW, double xb, double yb, double xp, 
 double CalcVerticalDiffPHICoefficient(char NS, double xb, double yb, double yp, double ym, int bdy, double mp) {
     // 위쪽점을 참조하는 경우, y-축선의 위쪽점에서의 phi의 계수를 return
     if (NS == 'N')
-        return -greens_integral_tau(4, ym, yb, yp, xb, yb, 2, bdy, mp, mp) -
-               (greens_integral_tau(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
-                greens_integral_tau(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yb - ym) / (yp - ym);
+        return -5.0E-1 * greens_integral_tau(4, ym, yb, yp, xb, yb, 2, bdy, mp, mp) -
+               (5.0E-1 * greens_integral_tau(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
+                5.0E-1 * greens_integral_tau(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yb - ym) / (yp - ym);
     // 아래쪽점을 참조하는 경우, y-축선의 아래쪽점에서의 phi의 계수를 return
     if (NS == 'S')
-        return -greens_integral_tau(1, ym, yb, yp, xb, yb, 2, bdy, mp, mp) -
-               (greens_integral_tau(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
-                greens_integral_tau(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yp - yb) / (yp - ym);
+        return -5.0E-1 * greens_integral_tau(1, ym, yb, yp, xb, yb, 2, bdy, mp, mp) -
+               (5.0E-1 * greens_integral_tau(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
+                5.0E-1 * greens_integral_tau(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yp - yb) / (yp - ym);
     // 잘못된 참조의 경우, 에러메시지를 출력하고 종료
     PrintError("CalcVerticalDiffPHICoefficient");
     exit(1);
@@ -985,14 +820,14 @@ double CalcVerticalDiffPHICoefficient(char NS, double xb, double yb, double yp, 
 double CalcHorizontalDiffPHICoefficient(char EW, double xb, double yb, double xp, double xm, int bdx, double mp) {
     // 오른쪽점을 참조하는 경우, x-축선의 오른쪽점에서의 phi의 계수를 return
     if (EW == 'E')
-        return greens_integral_tau(4, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-               (greens_integral_tau(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-                greens_integral_tau(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xb - xm) / (xp - xm);
+        return 5.0E-1 * greens_integral_tau(4, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+               (5.0E-1 * greens_integral_tau(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+                5.0E-1 * greens_integral_tau(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xb - xm) / (xp - xm);
     // 왼쪽점을 참조하는 경우, x-축선의 왼쪽점에서의 phi의 계수를 return
     if (EW == 'W')
-        return greens_integral_tau(1, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-               (greens_integral_tau(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-                greens_integral_tau(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xp - xb) / (xp - xm);
+        return 5.0E-1 * greens_integral_tau(1, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+               (5.0E-1 * greens_integral_tau(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+                5.0E-1 * greens_integral_tau(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xp - xb) / (xp - xm);
     // 잘못된 참조의 경우, 에러메시지를 출력하고 종료
     PrintError("CalcHorizontalDiffPHICoefficient");
     exit(1);
@@ -1002,14 +837,14 @@ double CalcHorizontalDiffPHICoefficient(char EW, double xb, double yb, double xp
 double CalcVerticalDiffFCoefficient(char NS, double xb, double yb, double yp, double ym, int bdy, double mp) {
     // 위쪽점을 참조하는 경우, y-축선의 위쪽점에서의 f의 계수를 return
     if (NS == 'N')
-        return greens_integral_tau(4, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
-               (greens_integral_tau(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
-                greens_integral_tau(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yb - ym) / (yp - ym);
+        return 5.0E-1 * greens_integral_tau(4, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
+               (5.0E-1 * greens_integral_tau(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
+                5.0E-1 * greens_integral_tau(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yb - ym) / (yp - ym);
     // 아래쪽점을 참조하는 경우, y-축선의 아래쪽점에서의 f의 계수를 return
     if (NS == 'S')
-        return greens_integral_tau(1, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
-               (greens_integral_tau(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
-                greens_integral_tau(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yp - yb) / (yp - ym);
+        return 5.0E-1 * greens_integral_tau(1, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
+               (5.0E-1 * greens_integral_tau(2, ym, yb, yp, xb, yb, 2, bdy, mp, mp) +
+                5.0E-1 * greens_integral_tau(3, ym, yb, yp, xb, yb, 2, bdy, mp, mp)) * (yp - yb) / (yp - ym);
     // 잘못된 참조의 경우, 에러메시지를 출력하고 종료
     PrintError("CalcVerticalFDiffCoefficient");
     exit(1);
@@ -1019,117 +854,17 @@ double CalcVerticalDiffFCoefficient(char NS, double xb, double yb, double yp, do
 double CalcHorizontalDiffFCoefficient(char EW, double xb, double yb, double xp, double xm, int bdx, double mp) {
     // 오른쪽점을 참조하는 경우, x-축선의 오른쪽점에서의 phi의 계수를 return
     if (EW == 'E')
-        return greens_integral_tau(4, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-               (greens_integral_tau(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-                greens_integral_tau(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xb - xm) / (xp - xm);
+        return 5.0E-1 * greens_integral_tau(4, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+               (5.0E-1 * greens_integral_tau(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+                5.0E-1 * greens_integral_tau(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xb - xm) / (xp - xm);
     // 왼쪽점을 참조하는 경우, x-축선의 왼쪽점에서의 phi의 계수를 return
     if (EW == 'W')
-        return greens_integral_tau(1, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-               (greens_integral_tau(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
-                greens_integral_tau(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xp - xb) / (xp - xm);
+        return 5.0E-1 * greens_integral_tau(1, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+               (5.0E-1 * greens_integral_tau(2, xm, xb, xp, xb, yb, 1, bdx, mp, mp) +
+                5.0E-1 * greens_integral_tau(3, xm, xb, xp, xb, yb, 1, bdx, mp, mp)) * (xp - xb) / (xp - xm);
     // 잘못된 참조의 경우, 에러메시지를 출력하고 종료
     PrintError("CalcHorizontalFDiffCoefficient");
     exit(1);
-}
-
-double PhiInterp(Point *pt) {
-    // 국소 x-축선의 시작점과 끝점의 x-좌표와 현재점의 x-좌표
-    double xm = pt->MinMaxCoordinate('x', 'm'), xb = pt->Coord().Value('x'), xp = pt->MinMaxCoordinate('x', 'p');
-    // 국소 y-축선의 시작점과 끝점의 y-좌표와 현재점의 y-좌표
-    double ym = pt->MinMaxCoordinate('y', 'm'), yb = pt->Coord().Value('y'), yp = pt->MinMaxCoordinate('y', 'p');
-    // 오른쪽 phi의 값을 저장하기 위한 변수
-    double phiE = ZeroValue;
-    // 왼쪽 phi의 값을 저장하기 위한 변수
-    double phiW = ZeroValue;
-    // 위쪽 phi의 값을 저장하기 위한 변수
-    double phiN = ZeroValue;
-    // 아래쪽 phi의 값을 저장하기 위한 변수
-    double phiS = ZeroValue;
-    // x-축선 위에서 phi의 값을 근사하기 위한 변수
-    double phiX = ZeroValue;
-    // y-축선 위에서 phi의 값을 근사하기 위한 변수
-    double phiY = ZeroValue;
-
-    // 오른쪽점이 존재하는 경우
-    if (pt->EWNS('E', 'E') != nullptr) {
-        phiE = pt->EWNS('E', 'E')->Phi()->Value();
-    }
-        // 오른쪽 위의 점과 오른쪽 아래의 점이 존재하는 경우
-    else if (pt->EWNS('E', 'N') != nullptr && pt->EWNS('E', 'S') != nullptr) {
-        // 오른쪽 위의 점의 y-좌표를 저장
-        yp = pt->EWNS('E', 'N')->Coord().Value('y');
-        // 오른쪽 아래의 점의 y-좌표를 저장
-        ym = pt->EWNS('E', 'S')->Coord().Value('y');
-        // 오른쪽점에서의 phi의 값을 근사
-        phiE = pt->EWNS('E', 'N')->Phi()->Value() * (yb - ym) / (yp - ym) +
-               pt->EWNS('E', 'S')->Phi()->Value() * (yp - yb) / (yp - ym);
-    }
-        // 둘 다 아닌 경우 에러메시지를 출력
-    else PrintError("PhiInterp");
-
-    // 왼쪽점이 존재하는 경우
-    if (pt->EWNS('W', 'W') != nullptr) {
-        phiW = pt->EWNS('W', 'W')->Phi()->Value();
-    }
-        // 왼쪽 위의 점과 왼쪽 아래의 점이 존재하는 경우
-    else if (pt->EWNS('W', 'N') != nullptr && pt->EWNS('W', 'S') != nullptr) {
-        // 왼쪽 위의 점의 y-좌표를 저장
-        yp = pt->EWNS('W', 'N')->Coord().Value('y');
-        // 왼쪽 아래의 점의 y-좌표를 저장
-        ym = pt->EWNS('W', 'S')->Coord().Value('y');
-        // 왼쪽점에서의 phi의 값을 근사
-        phiW = pt->EWNS('W', 'N')->Phi()->Value() * (yb - ym) / (yp - ym) +
-               pt->EWNS('W', 'S')->Phi()->Value() * (yp - yb) / (yp - ym);
-    }
-        // 둘 다 아닌 경우 에러메시지를 출력
-    else PrintError("PhiInterp");
-
-    //  위쪽점이 존재하는 경우
-    if (pt->EWNS('N', 'N') != nullptr) {
-        phiN = pt->EWNS('N', 'N')->Phi()->Value();
-    }
-        //  위쪽의 오른쪽 점과  위쪽의 왼쪽점이 존재하는 경우
-    else if (pt->EWNS('N', 'E') != nullptr && pt->EWNS('N', 'W') != nullptr) {
-        //  위쪽의 오른쪽 점의 x-좌표를 저장
-        xp = pt->EWNS('N', 'E')->Coord().Value('x');
-        //  위쪽의 왼쪽 점의 x-좌표를 저장
-        xm = pt->EWNS('N', 'W')->Coord().Value('x');
-        //  위쪽점에서의 phi의 값을 근사
-        phiN = pt->EWNS('N', 'E')->Phi()->Value() * (xb - xm) / (xp - xm) +
-               pt->EWNS('N', 'W')->Phi()->Value() * (xp - xb) / (xp - xm);
-    }
-        // 둘 다 아닌 경우 에러메시지를 출력
-    else PrintError("PhiInterp");
-
-    // 아래쪽점이 존재하는 경우
-    if (pt->EWNS('S', 'S') != nullptr) {
-        phiS = pt->EWNS('S', 'S')->Phi()->Value();
-    }
-        // 아래쪽의 오른쪽 점과 아래쪽의 왼쪽점이 존재하는 경우
-    else if (pt->EWNS('S', 'E') != nullptr && pt->EWNS('S', 'W') != nullptr) {
-        // 아래쪽의 오른쪽 점의 x-좌표를 저장
-        xp = pt->EWNS('S', 'E')->Coord().Value('x');
-        // 아래쪽의 왼쪽 점의 x-좌표를 저장
-        xm = pt->EWNS('S', 'W')->Coord().Value('x');
-        // 아래쪽점에서의 phi의 값을 근사
-        phiS = pt->EWNS('S', 'E')->Phi()->Value() * (xb - xm) / (xp - xm) +
-               pt->EWNS('S', 'W')->Phi()->Value() * (xp - xb) / (xp - xm);
-    }
-        // 둘 다 아닌 경우 에러메시지를 출력
-    else PrintError("PhiInterp");
-
-    // 국소 x-축선의 시작점과 끝점의 x-좌표와 현재점의 x-좌표
-    xm = pt->MinMaxCoordinate('x', 'm'), xb = pt->Coord().Value('x'), xp = pt->MinMaxCoordinate('x', 'p');
-    // 국소 y-축선의 시작점과 끝점의 y-좌표와 현재점의 y-좌표
-    ym = pt->MinMaxCoordinate('y', 'm'), yb = pt->Coord().Value('y'), yp = pt->MinMaxCoordinate('y', 'p');
-
-    // x-축선 위에서 phi의 값의 근사
-    phiX = phiE * (xb - xm) / (xp - xm) + phiW * (xp - xb) / (xp - xm);
-    // y-축선 위에서 phi의 값의 근사
-    phiY = phiN * (yb - ym) / (yp - ym) + phiS * (yp - yb) / (yp - ym);
-
-    // return 5.0E-1 * (phiX + phiY);
-    return phiY;
 }
 
 void SettingMaterialProperties(Point *pt, double *mpx1, double *mpx2, double *mpy1, double *mpy2) {
@@ -1208,17 +943,6 @@ void InitializationCoef(xData *xdat, yData *ydat, const string& xy) {
     }
 }
 
-void SettingGreenShape(Point *pt, int *bdx, int *bdy) {
-    char azimuthNX[2][3] = {"E2", "W1"};
-    char azimuthNY[2][3] = {"N2", "S1"};
-    // char azimuthF[4][3] = {"E4", "W3", "N4", "S3"};
-    if (pt->Condition() == 'N') {
-        for (const auto &i : azimuthNX) if (pt->IsBoundary(i[0])) *bdx = int(i[1]) - '0';
-        for (const auto &i : azimuthNY) if (pt->IsBoundary(i[0])) *bdy = int(i[1]) - '0';
-    }
-    // for (const auto &i : azimuthF) if (pt->EWNS (i[0], i[0])) if (pt->EWNS (i[0], i[0])->Condition () == 'F') *bdx = int (i[1]) - '0';
-}
-
 void SettingCoefficient(Point *pt, xData *xdat, yData *ydat,
                         const double xm, const double xb, const double xp,
                         const double ym, const double yb, const double yp,
@@ -1234,19 +958,19 @@ void SettingCoefficient(Point *pt, xData *xdat, yData *ydat,
     // 국소 x-축선에서 u의 국소 x-축선에서 시작점에서의 계수
     xdat->Wu = greens_coefficient_t(xm, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2);
     // 국소 x-축선에서 phi의 현재점에서의 계수
-    xdat->Cphi = greens_integral(2, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2) +
-                 greens_integral(3, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2);
+    xdat->Cphi = 5.0E-1 * greens_integral(2, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2) +
+                 5.0E-1 * greens_integral(3, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2);
     // 국소 x-축선에서 phi의 국소 x-축선에서 끝점에서의 계수
-    xdat->Ephi = greens_integral(4, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2);
+    xdat->Ephi = 5.0E-1 * greens_integral(4, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2);
     // 국소 x-축선에서 phi의 국소 x-축선에서 시작점에서의 계수
-    xdat->Wphi = greens_integral(1, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2);
+    xdat->Wphi = 5.0E-1 * greens_integral(1, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2);
     // 국소 x-축선에서 f의 현재점에서의 계수
-    xdat->Cf = greens_integral(2, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2) +
-               greens_integral(3, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2);
+    xdat->Cf = 5.0E-1 * greens_integral(2, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2) +
+               5.0E-1 * greens_integral(3, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2);
     // 국소 x-축선에서 f의 국소 x-축선에서 끝점에서의 계수
-    xdat->Ef = greens_integral(4, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2);
+    xdat->Ef = 5.0E-1 * greens_integral(4, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2);
     // 국소 x-축선에서 f의 국소 x-축선에서 시작점에서의 계수
-    xdat->Wf = greens_integral(1, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2);
+    xdat->Wf = 5.0E-1 * greens_integral(1, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2);
     // x-축선의 양끝점중 한 개의 점의 경계조건이 Infinity 혹은 Singularity일 때, 정확한 적분을 계산
     ExactIntegration('x', xdat, ydat, nD, bdx, bdy, xm, xb, xp, ym, yb, yp);
     // 국소 y-축선에서 u의 현재점에서의 계수
@@ -1256,19 +980,19 @@ void SettingCoefficient(Point *pt, xData *xdat, yData *ydat,
     // 국소 y-축선에서 u의 국소 y-축선에서 시작점에서의 계수
     ydat->Su = sign * greens_coefficient_t(ym, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2);
     // 국소 y-축선에서 phi의 현재점에서의 계수
-    ydat->Cphi = -sign * greens_integral(2, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2)
-                 -sign * greens_integral(3, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2);
+    ydat->Cphi = -sign * 5.0E-1 * greens_integral(2, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2)
+                 -sign * 5.0E-1 * greens_integral(3, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2);
     // 국소 y-축선에서 phi의 국소 y-축선에서 끝점에서의 계수
-    ydat->Nphi = -sign * greens_integral(4, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2);
+    ydat->Nphi = -sign * 5.0E-1 * greens_integral(4, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2);
     // 국소 y-축선에서 phi의 국소 y-축선에서 시작점에서의 계수
-    ydat->Sphi = -sign * greens_integral(1, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2);
+    ydat->Sphi = -sign * 5.0E-1 * greens_integral(1, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2);
     // 국소 y-축선에서 f의 현재점에서의 계수
-    ydat->Cf = sign * greens_integral(2, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2) +
-               sign * greens_integral(3, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2);
+    ydat->Cf = sign * 5.0E-1 * greens_integral(2, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2) +
+               sign * 5.0E-1 * greens_integral(3, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2);
     // 국소 y-축선에서 f의 국소 y-축선에서 끝점에서의 계수
-    ydat->Nf = sign * greens_integral(4, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2);
+    ydat->Nf = sign * 5.0E-1 * greens_integral(4, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2);
     // 국소 y-축선에서 f의 국소 y-축선에서 시작점에서의 계수
-    ydat->Sf = sign * greens_integral(1, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2);
+    ydat->Sf = sign * 5.0E-1 * greens_integral(1, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2);
     // y-축선의 양끝점중 한 개의 점의 경계조건이 Infinity 혹은 Singularity일 때, 정확한 적분을 계산
     ExactIntegration('y', xdat, ydat, nD, bdx, bdy, xm, xb, xp, ym, yb, yp);
 
@@ -1290,37 +1014,37 @@ void SettingNeumannCoefficient(Point *pt, xData *xdat, yData *ydat,
         // 국소 x-축선에서 u의 국소 x-축선에서 시작점에서의 계수
         xdat->Wu += greens_coefficient_ttau(xm, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
         // 국소 x-축선에서 phi의 현재점에서의 계수
-        if (!IsEqualDouble(xb, xm)) xdat->Cphi += greens_integral_tau(2, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
-        if (!IsEqualDouble(xb, xp)) xdat->Cphi += greens_integral_tau(3, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
+        if (!IsEqualDouble(xb, xm)) xdat->Cphi += 5.0E-1 * greens_integral_tau(2, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
+        if (!IsEqualDouble(xb, xp)) xdat->Cphi += 5.0E-1 * greens_integral_tau(3, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
         // 국소 x-축선에서 phi의 국소 x-축선에서 끝점에서의 계수
-        if (!IsEqualDouble(xb, xp)) xdat->Ephi += greens_integral_tau(4, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
+        if (!IsEqualDouble(xb, xp)) xdat->Ephi += 5.0E-1 * greens_integral_tau(4, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
         // 국소 x-축선에서 phi의 국소 x-축선에서 시작점에서의 계수
-        if (!IsEqualDouble(xb, xm)) xdat->Wphi += greens_integral_tau(1, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
+        if (!IsEqualDouble(xb, xm)) xdat->Wphi += 5.0E-1 * greens_integral_tau(1, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
         // 국소 x-축선에서 f의 현재점에서의 계수
-        if (!IsEqualDouble(xb, xm)) xdat->Cf += greens_integral_tau(2, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
-        if (!IsEqualDouble(xb, xp)) xdat->Cf += greens_integral_tau(3, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
+        if (!IsEqualDouble(xb, xm)) xdat->Cf += 5.0E-1 * greens_integral_tau(2, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
+        if (!IsEqualDouble(xb, xp)) xdat->Cf += 5.0E-1 * greens_integral_tau(3, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
         // 국소 x-축선에서 f의 국소 x-축선에서 끝점에서의 계수
-        if (!IsEqualDouble(xb, xp)) xdat->Ef += greens_integral_tau(4, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
+        if (!IsEqualDouble(xb, xp)) xdat->Ef += 5.0E-1 * greens_integral_tau(4, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
         // 국소 x-축선에서 f의 국소 x-축선에서 시작점에서의 계수
-        if (!IsEqualDouble(xb, xm)) xdat->Wf += greens_integral_tau(1, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
+        if (!IsEqualDouble(xb, xm)) xdat->Wf += 5.0E-1 * greens_integral_tau(1, xm, xb, xp, xb, yb, 1, 0, mpx1, mpx2);
         // 국소 y-축선에서 u의 국소 y-축선에서 끝점에서의 계수
         ydat->Nu += greens_coefficient_ttau(yp, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
         // 국소 y-축선에서 u의 국소 y-축선에서 시작점에서의 계수
         ydat->Su += greens_coefficient_ttau(ym, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
         // 국소 y-축선에서 phi의 현재점에서의 계수
-        if (!IsEqualDouble(yb, ym)) ydat->Cphi -= greens_integral_tau(2, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
-        if (!IsEqualDouble(yb, yp)) ydat->Cphi -= greens_integral_tau(3, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
+        if (!IsEqualDouble(yb, ym)) ydat->Cphi -= 5.0E-1 * greens_integral_tau(2, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
+        if (!IsEqualDouble(yb, yp)) ydat->Cphi -= 5.0E-1 * greens_integral_tau(3, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
         // 국소 y-축선에서 phi의 국소 y-축선에서 끝점에서의 계수
-        if (!IsEqualDouble(yb, yp)) ydat->Nphi -= greens_integral_tau(4, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
+        if (!IsEqualDouble(yb, yp)) ydat->Nphi -= 5.0E-1 * greens_integral_tau(4, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
         // 국소 y-축선에서 phi의 국소 y-축선에서 시작점에서의 계수
-        if (!IsEqualDouble(yb, ym)) ydat->Sphi -= greens_integral_tau(1, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
+        if (!IsEqualDouble(yb, ym)) ydat->Sphi -= 5.0E-1 * greens_integral_tau(1, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
         // 국소 y-축선에서 f의 현재점에서의 계수
-        if (!IsEqualDouble(yb, ym)) ydat->Cf += greens_integral_tau(2, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
-        if (!IsEqualDouble(yb, yp)) ydat->Cf += greens_integral_tau(3, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
+        if (!IsEqualDouble(yb, ym)) ydat->Cf += 5.0E-1 * greens_integral_tau(2, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
+        if (!IsEqualDouble(yb, yp)) ydat->Cf += 5.0E-1 * greens_integral_tau(3, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
         // 국소 y-축선에서 f의 국소 y-축선에서 끝점에서의 계수
-        if (!IsEqualDouble(yb, yp)) ydat->Nf += greens_integral_tau(4, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
+        if (!IsEqualDouble(yb, yp)) ydat->Nf += 5.0E-1 * greens_integral_tau(4, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
         // 국소 y-축선에서 f의 국소 y-축선에서 시작점에서의 계수
-        if (!IsEqualDouble(yb, ym)) ydat->Sf += greens_integral_tau(1, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
+        if (!IsEqualDouble(yb, ym)) ydat->Sf += 5.0E-1 * greens_integral_tau(1, ym, yb, yp, xb, yb, 2, 0, mpy1, mpy2);
 
         // For Heat Equation
         if (::SolverType)
@@ -1333,35 +1057,7 @@ void SettingNeumannCoefficient(Point *pt, xData *xdat, yData *ydat,
         for (const auto &i : {&ydat->Cu, &ydat->Nu, &ydat->Su, &ydat->Cphi, &ydat->Nphi, &ydat->Sphi, &ydat->Cf,
                               &ydat->Nf, &ydat->Sf})
             if (IsEqualDouble(pt->Normal().Value('y'), ZeroValue)) *i = ZeroValue; else *i *= pt->Normal().Value('y');
-    } else {
-        PrintError("SettingNeumannCoefficient");
-
-
-        double XM = xm, XB = xb, XP = xp;
-        double YM = ym, YB = yb, YP = yp;
-
-        unordered_map<char, double *> m;
-        unordered_map<char, char> opposite_azimuth;
-
-        opposite_azimuth['E'] = 'W', opposite_azimuth['W'] = 'E', opposite_azimuth['N'] = 'S', opposite_azimuth['S'] = 'N';
-        m['E'] = &XP, m['W'] = &XM, m['N'] = &YP, m['S'] = &YM;
-
-        bool sh = true;
-
-        for (const auto &i : {'N', 'S'})
-            if (pt->IsBoundary(opposite_azimuth[i]))
-                for (const auto &j : {i, 'E', 'W'})
-                    if (pt->EWNS2nd(i, j)) *m[i] = pt->EWNS2nd(i, j)->Coord().Value('y'), sh = false;
-
-        if (IsEqualDouble(XP - XM, YP - YM) || sh)
-            for (const auto &i : {'E', 'W'})
-                if (pt->IsBoundary(opposite_azimuth[i]))
-                    for (const auto &j : {i, 'N', 'S'})
-                        if (pt->EWNS2nd(i, j)) *m[i] = pt->EWNS2nd(i, j)->Coord().Value('x');
-
-        SettingNeumannCoefficient(pt->Pressure(), xdat, ydat, XM, XB, XP, YM, YB, YP, bdx, bdy, mpx1, mpx2, mpy1, mpy2,
-                                  true);
-    }
+    } else PrintError("SettingNeumannCoefficient");
 }
 
 void SettingDirichletCoefficient(Point *pt, xData *xdat, yData *ydat,
@@ -1398,12 +1094,12 @@ void SettingDirichletCoefficient(Point *pt, xData *xdat, yData *ydat,
                         if (pt->EWNS(i, i)->EWNS(i, i))
                             if (pt->EWNS(i, i)->EWNS(i, i)->Condition() == 'C') {
                                 calc_pt = pt->EWNS(i, i)->EWNS(i, i);
-                                XM = calc_pt->Pressure()->MinMaxCoordinate('x',
-                                                                           'm'), XB = calc_pt->Pressure()->Coord().Value(
-                                        'x'), XP = calc_pt->Pressure()->MinMaxCoordinate('x', 'p');
-                                YM = calc_pt->Pressure()->MinMaxCoordinate('y',
-                                                                           'm'), YB = calc_pt->Pressure()->Coord().Value(
-                                        'y'), YP = calc_pt->Pressure()->MinMaxCoordinate('y', 'p');
+                                XM = calc_pt->Pressure()->MinMaxCoordinate('x', 'm');
+                                XB = calc_pt->Pressure()->Coord().Value('x');
+                                XP = calc_pt->Pressure()->MinMaxCoordinate('x', 'p');
+                                YM = calc_pt->Pressure()->MinMaxCoordinate('y', 'm');
+                                YB = calc_pt->Pressure()->Coord().Value('y');
+                                YP = calc_pt->Pressure()->MinMaxCoordinate('y', 'p');
                                 *m[i] = pt->Pressure()->Coord().Value(coord[i]);
                                 break;
                             }
@@ -1509,21 +1205,25 @@ void CalcInterfaceCoef(Point *pt, xData *xdat, yData *ydat, const char *azimuthH
                 PrintError(errorMassage);
             }
         }
-
-        for (size_t i = 0; i < 2; i++) if (pt->EWNS(azimuth, sub_azimuth[i])->Condition() == 'F') bd = 4 - i;
-        for (size_t i = 0; i < 2; i++) t[i] = pt->EWNS(azimuth, sub_azimuth[i])->Coord().Value(c);
-        for (size_t i = 1; i < 3; i++) {
+        // 무한경계인 경우 그린함수의 형태를 바꾼다.
+        for (int i = 0; i < 2; i++) if (pt->EWNS(azimuth, sub_azimuth[i])->Condition() == 'F') bd = 4 - i;
+        // 계산하기 위한 좌표의 값을 저장한다.
+        for (int i = 0; i < 2; i++) t[i] = pt->EWNS(azimuth, sub_azimuth[i])->Coord().Value(c);
+        // 축선 위에서 가상의 점에서의 값을 계산한다.
+        for (int i = 1; i < 3; i++) {
             *u[i] = uCoef(sub_azimuth[i - 1], xb, yb, t[0], t[1], bd, mp) * (*u[0]);
             *phi[i] = phiCoef(sub_azimuth[i - 1], xb, yb, t[0], t[1], bd, mp) * (*u[0]) +
                       (*phi[0]) * fabs(tt - t[i % 2]) / (t[0] - t[1]);
             *f[i] = fCoef(sub_azimuth[i - 1], xb, yb, t[0], t[1], bd, mp) * (*u[0]) +
                     (*f[0]) * fabs(tt - t[i % 2]) / (t[0] - t[1]);
 
-            if (::SolverType)
-                *u[i] -= 5.0E-1 * fCoef(sub_azimuth[i - 1], xb, yb, t[0], t[1], bd, mp) * (*u[0]) / pt->Dt();
-            if (::SolverType)
+            if (::SolverType) {
+                *u[i] -= fCoef(sub_azimuth[i - 1], xb, yb, t[0], t[1], bd, mp) * (*u[0]) / pt->Dt();
                 *f[3] += fCoef(sub_azimuth[i - 1], xb, yb, t[0], t[1], bd, mp) * (*u[0]) / pt->Dt() *
                          pt->EWNS(azimuth, sub_azimuth[i - 1])->Pre()->Value();
+                *f[3] += 2.0E0 * pt->MaterialProperty() * fCoef(sub_azimuth[i - 1], xb, yb, t[0], t[1], bd, mp) * (*u[0]) *
+                         pt->EWNS(azimuth, sub_azimuth[i - 1])->Diff(c)->Diff(c)->Pre()->Value();
+            }
         }
     }
 }
@@ -1614,9 +1314,9 @@ void CalcDiffDiffCoef(Point *pt, xData *xdat, yData *ydat, const char *azimuthHV
             }
         }
 
-        for (size_t i = 0; i < 2; i++) if (pt->EWNS(azimuth, sub_azimuth[i])->Condition() == 'F') bd = 4 - i;
-        for (size_t i = 0; i < 2; i++) t[i] = pt->EWNS(azimuth, sub_azimuth[i])->Coord().Value(c);
-        for (size_t i = 1; i < 3; i++) {
+        for (int i = 0; i < 2; i++) if (pt->EWNS(azimuth, sub_azimuth[i])->Condition() == 'F') bd = 4 - i;
+        for (int i = 0; i < 2; i++) t[i] = pt->EWNS(azimuth, sub_azimuth[i])->Coord().Value(c);
+        for (int i = 1; i < 3; i++) {
             *du[i] = (*du[0]) * fabs(tt - t[i % 2]) / (t[0] - t[1]);
         }
     }
@@ -1631,10 +1331,10 @@ void ApproximateDiffDiffPt(Point *pt, xData *xdat, yData *ydat, double xm, doubl
     tx['E'] = xp, tx['W'] = xm, tx['N'] = xb, tx['S'] = xb;
     ty['E'] = yb, ty['W'] = yb, ty['N'] = yp, ty['S'] = ym;
 
-    for (size_t i = 0; i < 4; i++)
-        CalcInterfaceCoef(pt, xdat, ydat, azimuthHV[i], tx[azimuthHV[i][0]], ty[azimuthHV[i][0]], ym, yp, mp[i]),
-                CalcDiffDiffCoef(pt, xdat, ydat, azimuthHV[i], tx[azimuthHV[i][0]], ty[azimuthHV[i][0]], ym, yp, mp[i]);
-
+    for (size_t i = 0; i < 4; i++) {
+        CalcInterfaceCoef(pt, xdat, ydat, azimuthHV[i], tx[azimuthHV[i][0]], ty[azimuthHV[i][0]], ym, yp, mp[i]);
+        CalcDiffDiffCoef(pt, xdat, ydat, azimuthHV[i], tx[azimuthHV[i][0]], ty[azimuthHV[i][0]], ym, yp, mp[i]);
+    }
 }
 
 void TransposeNeumannBoundaryData(Point *pt, xData *xdat, yData *ydat) {
@@ -1672,8 +1372,7 @@ void TransposeOtherBoundaryData(Point *pt, xData *xdat, yData *ydat) {
         } else {
             for (char i : sub_azimuth)
                 if (pt->EWNS(j, sub_azimuth[i]) == nullptr)
-                    sprintf(errorMassage, "TransposeOtherBoundaryData, (%c %c) point does not exist!!\n", j,
-                            i);
+                    sprintf(errorMassage, "TransposeOtherBoundaryData, (%c %c) point does not exist!!\n", j, i);
             for (size_t i = 0; i < 2; i++) {
                 if (pt->EWNS(j, sub_azimuth[i])->Condition() == 'I') *psi[(i + 1) % 2] += *psi[i], *psi[i] = ZeroValue;
                 if (pt->EWNS(j, sub_azimuth[i])->Condition() == 'F') *v[i] = ZeroValue, *psi[i] = ZeroValue;
@@ -2001,29 +1700,33 @@ void SettingNeumannTimeIntegrationRightHand(Point *pt, xData *xdat, yData *ydat,
     f['N']['N'] = -5.0E-1 * greens_integral_tau(4, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2) / pt->Dt();
     f['S']['S'] = -5.0E-1 * greens_integral_tau(1, ym, yb, yp, xb, yb, 2, bdy, mpy1, mpy2) / pt->Dt();
 
-    if (pt->EWNS('E', 'N') && pt->EWNS('E', 'S'))
+    if (pt->EWNS('E', 'N') && pt->EWNS('E', 'S')) {
         f['E']['N'] = f['E']['E'] * (yb - pt->EWNS('E', 'S')->Coord().Value('y')) /
-                      (pt->EWNS('E', 'N')->Coord().Value('y') - pt->EWNS('E', 'S')->Coord().Value('y')),
-                f['E']['S'] = f['E']['E'] * (pt->EWNS('E', 'N')->Coord().Value('y') - yb) /
-                              (pt->EWNS('E', 'N')->Coord().Value('y') - pt->EWNS('E', 'S')->Coord().Value('y'));
+                      (pt->EWNS('E', 'N')->Coord().Value('y') - pt->EWNS('E', 'S')->Coord().Value('y'));
+        f['E']['S'] = f['E']['E'] * (pt->EWNS('E', 'N')->Coord().Value('y') - yb) /
+                      (pt->EWNS('E', 'N')->Coord().Value('y') - pt->EWNS('E', 'S')->Coord().Value('y'));
+    }
 
-    if (pt->EWNS('W', 'N') && pt->EWNS('W', 'S'))
+    if (pt->EWNS('W', 'N') && pt->EWNS('W', 'S')) {
         f['W']['N'] = f['W']['W'] * (yb - pt->EWNS('W', 'S')->Coord().Value('y')) /
-                      (pt->EWNS('W', 'N')->Coord().Value('y') - pt->EWNS('W', 'S')->Coord().Value('y')),
-                f['W']['S'] = f['W']['W'] * (pt->EWNS('W', 'N')->Coord().Value('y') - yb) /
-                              (pt->EWNS('W', 'N')->Coord().Value('y') - pt->EWNS('W', 'S')->Coord().Value('y'));
+                      (pt->EWNS('W', 'N')->Coord().Value('y') - pt->EWNS('W', 'S')->Coord().Value('y'));
+        f['W']['S'] = f['W']['W'] * (pt->EWNS('W', 'N')->Coord().Value('y') - yb) /
+                      (pt->EWNS('W', 'N')->Coord().Value('y') - pt->EWNS('W', 'S')->Coord().Value('y'));
+    }
 
-    if (pt->EWNS('N', 'E') && pt->EWNS('N', 'W'))
+    if (pt->EWNS('N', 'E') && pt->EWNS('N', 'W')) {
         f['N']['E'] = f['N']['N'] * (xb - pt->EWNS('N', 'W')->Coord().Value('x')) /
-                      (pt->EWNS('N', 'E')->Coord().Value('x') - pt->EWNS('N', 'W')->Coord().Value('x')),
-                f['N']['W'] = f['N']['N'] * (pt->EWNS('N', 'E')->Coord().Value('x') - xb) /
-                              (pt->EWNS('N', 'E')->Coord().Value('x') - pt->EWNS('N', 'W')->Coord().Value('x'));
+                      (pt->EWNS('N', 'E')->Coord().Value('x') - pt->EWNS('N', 'W')->Coord().Value('x'));
+        f['N']['W'] = f['N']['N'] * (pt->EWNS('N', 'E')->Coord().Value('x') - xb) /
+                      (pt->EWNS('N', 'E')->Coord().Value('x') - pt->EWNS('N', 'W')->Coord().Value('x'));
+    }
 
-    if (pt->EWNS('S', 'E') && pt->EWNS('S', 'W'))
+    if (pt->EWNS('S', 'E') && pt->EWNS('S', 'W')) {
         f['S']['E'] = f['S']['S'] * (xb - pt->EWNS('S', 'W')->Coord().Value('x')) /
-                      (pt->EWNS('S', 'E')->Coord().Value('x') - pt->EWNS('S', 'W')->Coord().Value('x')),
-                f['S']['W'] = f['S']['S'] * (pt->EWNS('S', 'E')->Coord().Value('x') - xb) /
-                              (pt->EWNS('S', 'E')->Coord().Value('x') - pt->EWNS('S', 'W')->Coord().Value('x'));
+                      (pt->EWNS('S', 'E')->Coord().Value('x') - pt->EWNS('S', 'W')->Coord().Value('x'));
+        f['S']['W'] = f['S']['S'] * (pt->EWNS('S', 'E')->Coord().Value('x') - xb) /
+                      (pt->EWNS('S', 'E')->Coord().Value('x') - pt->EWNS('S', 'W')->Coord().Value('x'));
+    }
 
     if (!IsEqualDouble(pt->Normal().Value('x'), ZeroValue))
         xdat->F -= 5.0E-1 * greens_integral_tau(2, xm, xb, xp, xb, yb, 1, bdx, mpx1, mpx2) / pt->Dt() *
